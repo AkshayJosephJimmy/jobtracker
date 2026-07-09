@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+
+  
+}
+
+enum Status {
+  APPLIED
+  SCREENING
+  INTERVIEW
+  REJECTED
+}
+
+model User {
+  id           String        @id @db.Uuid
+  createdAt    DateTime      @default(now()) @map("created_at")
+  applications Application[]
+
+  @@map("users")
+}
+
+model Application {
+  id             String    @id @default(uuid()) @db.Uuid
+  userId         String    @map("user_id") @db.Uuid
+  companyName    String    @map("company_name")
+  role           String
+  status         Status    @default(APPLIED)
+  portal         String?
+  jobDescription String?   @map("job_description")
+  applyDate      DateTime  @default(now()) @map("apply_date")
+  resumeName     String?   @map("resume_name")
+  resumeLink     String?   @map("resume_link")
+  hasReferral    Boolean   @default(false) @map("has_referral")
+  notes          String?
+  aiAnalysis     Json?     @map("ai_analysis")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  followUps FollowUp[]
+
+  @@map("applications")
+}
+
+model FollowUp {
+  id            String      @id @default(uuid()) @db.Uuid
+  applicationId String      @map("application_id") @db.Uuid
+  message       String?
+  followedUpAt  DateTime    @map("followed_up_at")
+  createdAt     DateTime    @default(now()) @map("created_at")
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@map("follow_ups")
+}
