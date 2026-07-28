@@ -3,6 +3,9 @@
 import { useState, SubmitEvent } from "react";
 import { VT323 } from "next/font/google";
 import { createClient } from "@/lib/supabase/client";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 
 const vt323 = VT323({
   variable: "--font-vt323",
@@ -11,30 +14,44 @@ const vt323 = VT323({
 });
 
 export default function SignupPage() {
+
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+ 
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: SubmitEvent) {
     e.preventDefault();
     setError(null);
-    setMessage(null);
+    
 
     if (password !== confirmPassword) {
       setError("PASSWORDS DO NOT MATCH");
       return;
     }
+    
 
     setLoading(true);
 
     const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
+    const { data,error } = await supabase.auth.signUp({
       email,
       password,
     });
+    if (!data.session) {
+  setError('An account with this email already exists. Please login instead.');
+  console.log('Error signing up:', error);
+  setLoading(false)
+  return
+}
+
+    if (data){
+      toast.success("ACCOUNT CREATED. CHECK EMAIL TO CONFIRM.");
+      router.push("/dashboard");
+    }
 
     setLoading(false);
 
@@ -43,7 +60,7 @@ export default function SignupPage() {
       return;
     }
 
-    setMessage("ACCOUNT CREATED. CHECK EMAIL TO CONFIRM.");
+    
   }
 
   return (
@@ -174,14 +191,7 @@ export default function SignupPage() {
               </p>
             )}
 
-            {message && (
-              <p
-                className="text-lg tracking-wide"
-                style={{ color: "#00ff46" }}
-              >
-                &gt; {message}
-              </p>
-            )}
+            
 
             <button
               type="submit"

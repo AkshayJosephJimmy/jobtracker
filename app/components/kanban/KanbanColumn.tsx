@@ -4,6 +4,8 @@ import { Draggable, Droppable } from "@hello-pangea/dnd";
 import ApplicationCard from "./ApplicationCard";
 import AddApplicationModal from "../modals/AddApplicationModal";
 import { useState } from "react";
+import { useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 const application = {
   id: "1",
@@ -21,12 +23,43 @@ type KanbanColumnProps = {
 };
 
 function KanbanColumn({ title }: KanbanColumnProps) {
-  const [applications] = useState([application]);
+  const [applications, setApplications] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const cards = applications.filter((app) => app.status === title);
-  function handelAddApplication() {
+  
+
+  
+    
+  async function handelAddApplication() {
     setIsModalOpen(true);
-  }
+
+    }
+
+
+     useEffect(() => {
+        async function fetchApplications(){
+    
+       
+      const res= await fetch('/api/application')
+      console.log(res)
+      const data=await res.json()
+
+
+
+
+        console.log("ddfs",data)
+        setApplications(data)
+        
+        
+
+        
+    
+      }
+      fetchApplications()
+    },[])
+
+    console.log("fdfd",applications)
+
+
   return (
     <Droppable droppableId={title}>
       {(provided) => (
@@ -52,7 +85,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
           </h2>
 
           <div className="flex flex-col gap-3 flex-1">
-            {cards.map((app, index) => (
+            { applications.filter((app) => app.status === title).map((app, index) => (
               <Draggable key={app.id} draggableId={app.id} index={index}>
                 {(provided) => (
                   <div
@@ -67,7 +100,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
             ))}
             {provided.placeholder}
 
-            {cards.length === 0 && (
+            {applications.length === 0 && (
               <p
                 className="text-lg tracking-wide text-center mt-6"
                 style={{ color: "#00ff46", opacity: 0.4 }}

@@ -22,9 +22,11 @@ function KanbanBoard() {
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <div className="flex flex-row gap-4 overflow-x-auto p-4">
-        <KanbanColumn title="Applied" />
-        <KanbanColumn title="Interviewing" />
-        <KanbanColumn title="Offer Received" />
+        <KanbanColumn title="APPLIED" />
+        <KanbanColumn title=" INTERVIEW" />
+        <KanbanColumn title=" SCREENIG" />
+        <KanbanColumn title="REJECTED " />
+
       </div>
     </DragDropContext>
   )

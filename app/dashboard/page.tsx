@@ -2,10 +2,34 @@
 import { Link } from "react-router-dom";
 import KanbanBoard from "../components/kanban/KanbanBoard";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { useState } from "react";
+import { useEffect } from "react";
+
+
+ function Dashboard() {
+
+  
+  
+  
+  
+  const[userName, setUserName] = useState()
+  
+  useEffect( () => {
+    async function fetchUser() {
+    const supabase = createClient();
+    const { data,error } = await supabase.auth.getUser();
+    setUserName(data.user.email.split('@')[0]);
+    console.log(userName)
+}
+fetchUser()
+
+},[]);
 
 
 
-function Dashboard() {
+ 
+
   const router = useRouter();
   return (
     <div>

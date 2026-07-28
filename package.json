@@ -10,18 +10,22 @@
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
+    "@prisma/adapter-pg": "^7.9.0",
     "@prisma/client": "^7.8.0",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.110.1",
     "next": "16.2.9",
+    "pg": "^8.22.0",
     "prisma": "^7.8.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.18.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
