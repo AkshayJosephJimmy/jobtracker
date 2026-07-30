@@ -1,10 +1,11 @@
 "use client";
-import { Link } from "react-router-dom";
+
 import KanbanBoard from "../components/kanban/KanbanBoard";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { useEffect } from "react";
+import { ApplicationProvider } from "../context/ApplicationsContext";
 
 
  function Dashboard() {
@@ -32,6 +33,8 @@ fetchUser()
 
   const router = useRouter();
   return (
+    <ApplicationProvider>
+
     <div>
       <div className="flex flex-row gap-1">
         <h1 className="text-3xl tracking-wide" style={{ color: "#00ff46" }}>
@@ -49,6 +52,7 @@ fetchUser()
 
       </div>
     </div>
+    </ApplicationProvider>
   )
 }
 
