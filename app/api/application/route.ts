@@ -102,3 +102,31 @@ export async function GET(){
 
 
 }
+
+export async function PATCH(req:NextRequest){
+
+    const {newStatus,application_id}=await req.json()
+
+    try{
+
+        
+        const updatedApplication=await prisma.application.update(
+            {
+                where: {id: application_id},
+                
+                data:{status:newStatus}
+                
+            }
+        )
+        return NextResponse.json(updatedApplication)
+        
+    }catch(err){
+
+         console.error("Prisma create failed:", err);
+  return NextResponse.json({ message: "Failed to update application" }, { status: 500 });
+        
+    }
+
+
+
+}

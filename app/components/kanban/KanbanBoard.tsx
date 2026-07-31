@@ -2,6 +2,9 @@
 
 import { DragDropContext,DropResult  } from "@hello-pangea/dnd";
 import KanbanColumn from "./KanbanColumn";
+import {useApplication} from "../../context/ApplicationsContext";
+import { useEffect } from "react";
+import {fetchApplications} from "../../utility/fetchApplications"
 
 
 
@@ -12,13 +15,26 @@ import KanbanColumn from "./KanbanColumn";
 
 
 function KanbanBoard() {
+
   
+  const{application,setApplication}=useApplication()
 
     async function handleDragEnd(result: DropResult) {
+      const previousApplication=application
+      
         // Handle the drag and drop logic here
         console.log(result);
+       
        const newStatus=result.destination?.droppableId;
+        if(newStatus==undefined){
+
+          return
+          
+        }
        const application_id=result.draggableId
+
+
+       setApplication(prev=>prev.map(app=>app.id===application_id?{ ...app,status:newStatus as any }: app))
 
        const res =await fetch('/api/application',{
         method:"PATCH",
@@ -27,6 +43,15 @@ function KanbanBoard() {
 
 
        })
+
+       if (!res.ok){
+        throw new Error("card not in the right column")
+        setApplication(previousApplication)
+       }
+
+       
+
+       
 
        
 
@@ -39,9 +64,9 @@ function KanbanBoard() {
     <DragDropContext onDragEnd={handleDragEnd}>
       <div className="flex flex-row gap-4 overflow-x-auto p-4">
         <KanbanColumn title="APPLIED" />
-        <KanbanColumn title=" INTERVIEW" />
-        <KanbanColumn title=" SCREENING" />
-        <KanbanColumn title="REJECTED " />
+        <KanbanColumn title="INTERVIEW" />
+        <KanbanColumn title="SCREENING" />
+        <KanbanColumn title="REJECTED" />
 
       </div>
     </DragDropContext>

@@ -6,24 +6,18 @@ import AddApplicationModal from "../modals/AddApplicationModal";
 import { useState } from "react";
 import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import {useApplication,} from "../../context/ApplicationsContext"
+import {fetchApplications} from "../../utility/fetchApplications"
 
-const application = {
-  id: "1",
-  title: "Frontend Developer",
-  company: "Tech Company",
-  job: "Frontend Developer",
-  portal: "LinkedIn",
-  status: "Interviewing",
-  dateApplied: "2023-09-15",
-  followUpStatus: "Pending",
-};
+
 
 type KanbanColumnProps = {
   title: string;
 };
 
 function KanbanColumn({ title }: KanbanColumnProps) {
-  const [applications, setApplications] = useState([]);
+ 
+  const {application,setApplication}=useApplication()
   const [isModalOpen, setIsModalOpen] = useState(false);
   
 
@@ -36,28 +30,21 @@ function KanbanColumn({ title }: KanbanColumnProps) {
 
 
      useEffect(() => {
-        async function fetchApplications(){
+        async function loadApplications(){
     
-       
-      const res= await fetch('/api/application')
-      console.log(res)
-      const data=await res.json()
-
-
-
-
-        console.log("ddfs",data)
-        setApplications(data)
+       const data=await fetchApplications()
+      
+        setApplication(data)
         
         
 
         
     
       }
-      fetchApplications()
+      loadApplications()
     },[])
 
-    console.log("fdfd",applications)
+    console.log("fdfd",application)
 
 
   return (
@@ -85,7 +72,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
           </h2>
 
           <div className="flex flex-col gap-3 flex-1">
-            { applications.filter((app) => app.status === title).map((app, index) => (
+            { application.filter((app) => app.status === title).map((app, index) => (
               <Draggable key={app.id} draggableId={app.id} index={index}>
                 {(provided) => (
                   <div
@@ -100,7 +87,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
             ))}
             {provided.placeholder}
 
-            {applications.length === 0 && (
+            {application.length === 0 && (
               <p
                 className="text-lg tracking-wide text-center mt-6"
                 style={{ color: "#00ff46", opacity: 0.4 }}
@@ -109,7 +96,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
               </p>
             )}
           </div>
-          {title === "Applied" && (
+          {title === "APPLIED" && (
             <button
               className="mt-4 w-full text-lg tracking-widest py-1 rounded-sm border-2 transition-colors"
               style={{

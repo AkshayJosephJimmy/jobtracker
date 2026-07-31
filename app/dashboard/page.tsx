@@ -20,7 +20,7 @@ import { ApplicationProvider } from "../context/ApplicationsContext";
     async function fetchUser() {
     const supabase = createClient();
     const { data,error } = await supabase.auth.getUser();
-    setUserName(data.user.email.split('@')[0]);
+   // setUserName(data.user.email.split('@')[0]);
     console.log(userName)
 }
 fetchUser()
