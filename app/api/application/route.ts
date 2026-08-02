@@ -130,3 +130,27 @@ export async function PATCH(req:NextRequest){
 
 
 }
+
+export async function DELETE(req:NextRequest){
+    let delete_id:string
+try{
+
+     ({delete_id}=await req.json());
+
+}catch(err){
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+}
+    try{
+
+       const deletedApplication= await prisma.application.delete({where: {
+            id:delete_id
+        }})
+
+        return NextResponse.json({message:"application deleted",deletedApplication},{status:200})
+    }catch(err){
+        return NextResponse.json({ error: "could not delete application" }, { status: 400 });
+    }
+
+
+
+}

@@ -62,7 +62,10 @@ function KanbanBoard() {
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="flex flex-row gap-4 overflow-x-auto p-4">
+      <div
+        className="flex flex-row gap-3.5 overflow-x-auto p-4"
+        style={{ backgroundColor: "#e8e4dd" }}
+      >
         <KanbanColumn title="APPLIED" />
         <KanbanColumn title="INTERVIEW" />
         <KanbanColumn title="SCREENING" />

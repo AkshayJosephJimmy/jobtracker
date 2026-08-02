@@ -1,3 +1,5 @@
+import {useApplication,} from "../../context/ApplicationsContext"
+
 type Application = {
   id: string;
   title: string;
@@ -19,24 +21,88 @@ const FOLLOW_UP_COLOR: Record<string, string> = {
   None: "#7a7a7a",
 };
 
+const PORTAL_PALETTE = ["#0a66c2", "#2557a7", "#e5484d", "#00a86b", "#f59e0b", "#5b3df5"];
+
+function hexToRgba(hex: string, alpha: number) {
+  const clean = hex.replace("#", "");
+  const bigint = parseInt(clean, 16);
+  const r = (bigint >> 16) & 255;
+  const g = (bigint >> 8) & 255;
+  const b = bigint & 255;
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function portalDotColor(portal: string) {
+  if (!portal) return "#8a857c";
+  let hash = 0;
+  for (let i = 0; i < portal.length; i++) hash = (hash * 31 + portal.charCodeAt(i)) % PORTAL_PALETTE.length;
+  return PORTAL_PALETTE[Math.abs(hash)];
+}
+
 function ApplicationCard({ application }: ApplicationCardProps) {
+ const{setApplication}=useApplication()
+async function handleDelete(){
+
+    const delete_id=application.id
+    try{
+
+        
+        const res=await fetch('/api/application',{
+            method:"DELETE",
+            headers:{
+                "Content-Type": "application/json",
+            },
+            body:JSON.stringify({delete_id})
+            
+            
+        })
+         if(res.ok){
+
+        setApplication(prev=>prev.filter((app)=>app.id!==delete_id))
+
+    }
+    }catch(err){
+        throw new Error("Could not delete Application")
+    }
+   
+
+
+
+}
+
   const followUpColor =
     FOLLOW_UP_COLOR[application.followUpStatus] ?? "#00ff46";
+  const followUpBg = hexToRgba(followUpColor, 0.14);
 
   return (
     <div
-      className="group relative bg-black rounded-sm border-2 p-3 transition-shadow hover:shadow-lg"
+      className="group relative rounded-[10px] p-3 pr-2 pl-3.25 overflow-hidden"
       style={{
-        fontFamily: "var(--font-vt323), monospace",
-        borderColor: "#00ff46",
-        boxShadow: "0 0 3px rgba(0,255,70,0.35), inset 0 0 6px rgba(0,255,70,0.08)",
+        fontFamily: "var(--font-plus-jakarta), system-ui, sans-serif",
+        backgroundColor: "#fff",
+        border: "1px solid rgba(20,18,15,.1)",
+        boxShadow: "0 1px 2px rgba(20,18,15,.05)",
       }}
     >
+      <div
+        className="absolute left-0 top-0 bottom-0 w-0.75"
+        style={{ backgroundColor: followUpColor }}
+      />
+
       <button
         type="button"
         aria-label="Delete application"
-        className="absolute top-2 right-2 p-1 rounded-sm border transition-colors hover:bg-[#00ff46] hover:text-black"
-        style={{ color: "#00ff46", borderColor: "rgba(0,255,70,0.5)" }}
+        onClick={handleDelete}
+        className="absolute top-1.5 right-1.5 p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
+        style={{ color: "#a8a29a" }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = "#c3363b";
+          e.currentTarget.style.backgroundColor = "rgba(229,72,77,.1)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = "#a8a29a";
+          e.currentTarget.style.backgroundColor = "transparent";
+        }}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -46,7 +112,7 @@ function ApplicationCard({ application }: ApplicationCardProps) {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="w-4 h-4"
+          className="w-3.5 h-3.5"
         >
           <polyline points="3 6 5 6 21 6" />
           <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
@@ -56,38 +122,63 @@ function ApplicationCard({ application }: ApplicationCardProps) {
         </svg>
       </button>
 
-      <h3
-        className="text-xl tracking-wide leading-tight pr-6"
-        style={{ color: "#00ff46", textShadow: "0 0 3px rgba(0,255,70,0.5)" }}
+      <div className="flex items-baseline gap-2 pr-5">
+        <h3
+          className="text-[13px] font-bold leading-tight tracking-tight truncate"
+          style={{ color: "#14120f" }}
+        >
+          {application.title}
+        </h3>
+      </div>
+      <p
+        className="text-[11.5px] font-medium mt-0.5 truncate"
+        style={{ color: "#6b6660" }}
       >
-        {application.title}
-      </h3>
-      <p className="text-lg" style={{ color: "#00ff46", opacity: 0.8 }}>
         {application.company}
       </p>
 
-      <div className="mt-2 flex flex-col gap-1 text-lg" style={{ color: "#00ff46", opacity: 0.7 }}>
-        <p>
-          <span style={{ opacity: 0.6 }}>&gt; PORTAL:</span> {application.portal}
-        </p>
-        <p>
-          <span style={{ opacity: 0.6 }}>&gt; APPLIED:</span> {application.dateApplied}
-        </p>
-        <p style={{ color: followUpColor, opacity: 1 }}>
-          <span style={{ opacity: 0.6, color: "#00ff46" }}>&gt; FOLLOW-UP:</span>{" "}
-          {application.followUpStatus}
-        </p>
+      <div className="flex items-center gap-1.5 mt-2">
+        <div
+          className="flex items-center gap-1 rounded-[5px] px-1.5 py-0.75"
+          style={{ backgroundColor: "rgba(20,18,15,.05)" }}
+        >
+          <div
+            className="w-1.25 h-1.25 rounded-full"
+            style={{ backgroundColor: portalDotColor(application.portal) }}
+          />
+          <span className="text-[10px] font-semibold" style={{ color: "#4a463f" }}>
+            {application.portal}
+          </span>
+        </div>
+        <div className="flex-1" />
+        <div
+          className="rounded-[5px] px-1.5 py-0.75"
+          style={{ backgroundColor: followUpBg }}
+        >
+          <span
+            className="text-[9.5px] font-bold tracking-wide"
+            style={{ color: followUpColor, fontFamily: "var(--font-jetbrains-mono), monospace" }}
+          >
+            {application.followUpStatus}
+          </span>
+        </div>
+      </div>
+
+      <div
+        className="text-[10.5px] mt-2"
+        style={{ color: "#a8a29a", fontFamily: "var(--font-jetbrains-mono), monospace" }}
+      >
+        Applied {application.dateApplied}
       </div>
 
       <button
-        className="mt-3 w-full text-lg tracking-widest py-1 rounded-sm border-2 transition-colors"
+        className="mt-2.5 w-full text-[11px] font-semibold tracking-wide py-1.5 rounded-[7px] transition-colors"
         style={{
-          color: "#00ff46",
-          borderColor: "#00ff46",
-          textShadow: "0 0 3px rgba(0,255,70,0.5)",
+          color: "#4a463f",
+          backgroundColor: "#f6f3ee",
         }}
       >
-        [ VIEW DETAILS ]
+        View details
       </button>
     </div>
   );
