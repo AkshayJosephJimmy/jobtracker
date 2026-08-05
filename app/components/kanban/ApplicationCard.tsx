@@ -9,6 +9,7 @@ type Application = {
   status: string;
   dateApplied: string;
   followUpStatus: string;
+  updatedAt:string;
 };
 
 type ApplicationCardProps = {
@@ -38,6 +39,8 @@ function portalDotColor(portal: string) {
   for (let i = 0; i < portal.length; i++) hash = (hash * 31 + portal.charCodeAt(i)) % PORTAL_PALETTE.length;
   return PORTAL_PALETTE[Math.abs(hash)];
 }
+
+
 
 function ApplicationCard({ application }: ApplicationCardProps) {
  const{setApplication}=useApplication()
@@ -73,6 +76,7 @@ async function handleDelete(){
   const followUpColor =
     FOLLOW_UP_COLOR[application.followUpStatus] ?? "#00ff46";
   const followUpBg = hexToRgba(followUpColor, 0.14);
+ 
 
   return (
     <div
@@ -152,7 +156,7 @@ async function handleDelete(){
         </div>
         <div className="flex-1" />
         <div
-          className="rounded-[5px] px-1.5 py-0.75"
+          className="flex items-center gap-1 rounded-[5px] px-1.5 py-0.75"
           style={{ backgroundColor: followUpBg }}
         >
           <span
@@ -161,6 +165,14 @@ async function handleDelete(){
           >
             {application.followUpStatus}
           </span>
+          {application.updatedAt !== null && (
+            <span
+              className="text-[9px] font-semibold"
+              style={{ color: followUpColor, opacity: 0.75, fontFamily: "var(--font-jetbrains-mono), monospace" }}
+            >
+              {application.updatedAt}d
+            </span>
+          )}
         </div>
       </div>
 

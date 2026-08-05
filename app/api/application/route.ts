@@ -7,7 +7,7 @@ import {createClient} from "@/lib/supabase/server"
 
 
 
-
+const MS_PER_DAY = 1000 * 60 * 60 * 24
 
 
 export async function POST(req:NextRequest) {
@@ -30,7 +30,8 @@ export async function POST(req:NextRequest) {
             resumeName,
             resumeLink,
             hasReferral,
-            notes,} = await req.json();
+            notes,
+            } = await req.json();
 
 
     if(!userId || !companyName || !role || !status || !portal || !jobDescription || !applyDate   || hasReferral === undefined ){
@@ -52,7 +53,8 @@ export async function POST(req:NextRequest) {
                 resumeName,
                 resumeLink,
                 hasReferral,
-                notes
+                notes,
+                
             }
         })
         
@@ -82,11 +84,36 @@ export async function GET(){
     try{
 
         
-        const applications= await prisma.application.findMany({where:
-            {userId:user.id}})
+        const applications= await prisma.application.findMany(
+            {
+                where:
+                        {userId:user.id},
+
+                 include:{
+                        followUps:{
+                        orderBy:{followedUpAt:'desc'},
+                        take:1
+                            }
+                        }
+                    },
+                    
+                
+                )
+
+      const enrichedApplication=  applications.map(app=>{
+        const lastContact = app.followUps[0]?.followedUpAt ?? app.createdAt
+        const daysSince = Math.floor((Date.now() - new Date(lastContact).getTime()) / MS_PER_DAY)
+       
+
+        return{
+            ...app,
+            updatedAt :daysSince
+        }
+
+        })
+           
             
-            
-            return NextResponse.json(applications)
+        return NextResponse.json(enrichedApplication)
             
         }
 
