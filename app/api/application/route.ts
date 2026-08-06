@@ -130,54 +130,5 @@ export async function GET(){
 
 }
 
-export async function PATCH(req:NextRequest){
-
-    const {newStatus,application_id}=await req.json()
-
-    try{
-
-        
-        const updatedApplication=await prisma.application.update(
-            {
-                where: {id: application_id},
-                
-                data:{status:newStatus}
-                
-            }
-        )
-        return NextResponse.json(updatedApplication)
-        
-    }catch(err){
-
-         console.error("Prisma create failed:", err);
-  return NextResponse.json({ message: "Failed to update application" }, { status: 500 });
-        
-    }
 
 
-
-}
-
-export async function DELETE(req:NextRequest){
-    let delete_id:string
-try{
-
-     ({delete_id}=await req.json());
-
-}catch(err){
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
-}
-    try{
-
-       const deletedApplication= await prisma.application.delete({where: {
-            id:delete_id
-        }})
-
-        return NextResponse.json({message:"application deleted",deletedApplication},{status:200})
-    }catch(err){
-        return NextResponse.json({ error: "could not delete application" }, { status: 400 });
-    }
-
-
-
-}

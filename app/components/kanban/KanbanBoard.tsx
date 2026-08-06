@@ -36,10 +36,10 @@ function KanbanBoard() {
 
        setApplication(prev=>prev.map(app=>app.id===application_id?{ ...app,status:newStatus as any }: app))
 
-       const res =await fetch('/api/application',{
+       const res =await fetch(`/api/application/${application_id}`,{
         method:"PATCH",
         headers:{"Content-Type": "application/json"},
-        body:JSON.stringify({newStatus,application_id})
+        body:JSON.stringify({newStatus})
 
 
        })

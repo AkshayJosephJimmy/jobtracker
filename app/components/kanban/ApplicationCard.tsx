@@ -50,12 +50,12 @@ async function handleDelete(){
     try{
 
         
-        const res=await fetch('/api/application',{
+        const res=await fetch(`/api/application/${delete_id}`,{
             method:"DELETE",
             headers:{
                 "Content-Type": "application/json",
             },
-            body:JSON.stringify({delete_id})
+            
             
             
         })
