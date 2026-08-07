@@ -43,7 +43,9 @@ function portalDotColor(portal: string) {
 
 
 function ApplicationCard({ application }: ApplicationCardProps) {
- const{setApplication}=useApplication()
+ const{setApplication,selectedId,setSelectedId}=useApplication()
+
+
 async function handleDelete(){
 
     const delete_id=application.id
@@ -185,6 +187,7 @@ async function handleDelete(){
 
       <button
         className="mt-2.5 w-full text-[11px] font-semibold tracking-wide py-1.5 rounded-[7px] transition-colors"
+        onClick={()=>setSelectedId(application.id)}
         style={{
           color: "#4a463f",
           backgroundColor: "#f6f3ee",

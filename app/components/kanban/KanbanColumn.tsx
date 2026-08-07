@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import {useApplication,} from "../../context/ApplicationsContext"
 import {fetchApplications} from "../../utility/fetchApplications"
+import ApplicationDrawer from "../drawer/ApplicationDrawer";
 
 
 
@@ -37,20 +38,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
     }
 
 
-     useEffect(() => {
-        async function loadApplications(){
-    
-       const data=await fetchApplications()
-      
-        setApplication(data)
-        
-        
-
-        
-    
-      }
-      loadApplications()
-    },[])
+     
 
     console.log("fdfd",application)
 
@@ -118,7 +106,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
                   >
-                    <ApplicationCard application={app} />
+                    <ApplicationCard application={app}  />
                   </div>
                 )}
               </Draggable>
@@ -147,6 +135,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
               Add application
             </button>
           )}
+          
 
           <AddApplicationModal
             isOpen={isModalOpen}

@@ -15,7 +15,9 @@ type Application = Omit<PrismaApplication, 'applyDate' | 'createdAt' | 'updatedA
 
 type ApplicationContextType={
     application:Application[],
-    setApplication:React.Dispatch<React.SetStateAction<Application[]>>
+    setApplication:React.Dispatch<React.SetStateAction<Application[]>>,
+    selectedId:string | null,
+    setSelectedId:React.Dispatch<React.SetStateAction<string | null>>
 }
 
 
@@ -27,6 +29,7 @@ const ApplicationContext=createContext< ApplicationContextType | null>(null)
 export  function ApplicationProvider({children}:{children:ReactNode}){
     
     const [application,setApplication]= useState<Application[]>([])
+    const [selectedId,setSelectedId]=useState<string | null>(null)
     useEffect(() => {
         async function loadApplication(){
 
@@ -39,7 +42,7 @@ export  function ApplicationProvider({children}:{children:ReactNode}){
 
 
     return(
-        <ApplicationContext.Provider value={{application,setApplication}} >
+        <ApplicationContext.Provider value={{application,setApplication,selectedId,setSelectedId}} >
             {children}
 
 

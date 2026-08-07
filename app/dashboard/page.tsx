@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { useEffect } from "react";
 import { ApplicationProvider } from "../context/ApplicationsContext";
+import ApplicationDrawer from "../components/drawer/ApplicationDrawer";
 
 
  function Dashboard() {
@@ -183,6 +184,7 @@ fetchUser()
       </div>
 
       <KanbanBoard />
+      
     </div>
     </ApplicationProvider>
   )
