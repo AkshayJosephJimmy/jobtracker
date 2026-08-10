@@ -4,7 +4,7 @@ import { Draggable, Droppable } from "@hello-pangea/dnd";
 import ApplicationCard from "./ApplicationCard";
 import AddApplicationModal from "../modals/AddApplicationModal";
 import { useState } from "react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import {useApplication,} from "../../context/ApplicationsContext"
 import {fetchApplications} from "../../utility/fetchApplications"
@@ -28,21 +28,52 @@ function KanbanColumn({ title }: KanbanColumnProps) {
  
   const {application,setApplication}=useApplication()
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
 
-  
-    
+
+
+
   async function handelAddApplication() {
     setIsModalOpen(true);
+    
+
 
     }
 
 
-     
+
 
     console.log("fdfd",application)
 
     const columnStyle = COLUMN_STYLES[title.trim().toUpperCase()] ?? DEFAULT_COLUMN_STYLE;
+
+    const columnApplications = application
+      .filter((app) => app.status === title)
+      .sort((a, b) => b.daysSinceContact - a.daysSinceContact);
+
+    const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+    const seenIds = useRef<Set<string> | null>(null);
+    const [flashId, setFlashId] = useState<string | null>(null);
+
+    useEffect(() => {
+      const currentIds = new Set(columnApplications.map((app) => app.id));
+
+      if (seenIds.current === null) {
+        seenIds.current = currentIds;
+        return;
+      }
+
+      const newApp = columnApplications.find((app) => !seenIds.current!.has(app.id));
+      seenIds.current = currentIds;
+
+      if (newApp) {
+        const el = cardRefs.current.get(newApp.id);
+        el?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        setFlashId(newApp.id);
+        const timeout = setTimeout(() => setFlashId(null), 1400);
+        return () => clearTimeout(timeout);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [columnApplications.map((app) => app.id).join(",")]);
 
   return (
     <Droppable droppableId={title}>
@@ -98,15 +129,22 @@ function KanbanColumn({ title }: KanbanColumnProps) {
           </div>
 
           <div className="flex flex-col gap-1.5 flex-1 min-h-0 overflow-y-auto px-2.5 pb-2.5">
-            { application.filter((app) => app.status === title).map((app, index) => (
+            { columnApplications.map((app, index) => (
               <Draggable key={app.id} draggableId={app.id} index={index}>
                 {(provided) => (
                   <div
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    ref={provided.innerRef}
+                    ref={(el) => {
+                      provided.innerRef(el);
+                      if (el) {
+                        cardRefs.current.set(app.id, el);
+                      } else {
+                        cardRefs.current.delete(app.id);
+                      }
+                    }}
                   >
-                    <ApplicationCard application={app}  />
+                    <ApplicationCard application={app} highlight={flashId === app.id} />
                   </div>
                 )}
               </Draggable>

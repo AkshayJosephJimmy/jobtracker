@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import { toast } from "react-hot-toast";
 import { createClient } from "@/lib/supabase/client";
+import {useApplication} from "@/app/context/ApplicationsContext"
 
 type NewApplication = {
   userId: string;
@@ -21,7 +22,7 @@ type NewApplication = {
 type AddApplicationModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onAdd?: (application: NewApplication) => void;
+  onAdd?: (application: any) => void;
 };
 
 const STATUSES = ['APPLIED', 'SCREENING', 'INTERVIEW', 'REJECTED'];
@@ -33,6 +34,7 @@ const fieldStyle = {
 };
 
 function AddApplicationModal({ isOpen, onClose, onAdd }: AddApplicationModalProps) {
+  const{setApplication}=useApplication()
   const [companyName, setCompanyName] = useState("");
   const [role, setRole] = useState("");
   const [status, setStatus] = useState(STATUSES[0]);
@@ -104,6 +106,8 @@ function AddApplicationModal({ isOpen, onClose, onAdd }: AddApplicationModalProp
       toast.error("Failed to add application. Please try again.");
       return;
     }
+    const updated=await response.json()
+    setApplication(prev=>[...prev,updated.application])
 
     toast.success("Application added successfully!");
     onAdd?.(application);

@@ -15,6 +15,7 @@ type Application = {
 
 type ApplicationCardProps = {
   application: Application;
+  highlight?: boolean;
 };
 
 const FOLLOW_UP_COLOR: Record<string, string> = {
@@ -43,7 +44,7 @@ function portalDotColor(portal: string) {
 
 
 
-function ApplicationCard({ application }: ApplicationCardProps) {
+function ApplicationCard({ application, highlight }: ApplicationCardProps) {
  const{setApplication,selectedId,setSelectedId}=useApplication()
 
 
@@ -86,9 +87,12 @@ async function handleDelete(){
       className="group relative rounded-[10px] p-3 pr-2 pl-3.25 overflow-hidden"
       style={{
         fontFamily: "var(--font-plus-jakarta), system-ui, sans-serif",
-        backgroundColor: "#fff",
+        backgroundColor: highlight ? "rgba(0,168,107,.12)" : "#fff",
         border: "1px solid rgba(20,18,15,.1)",
-        boxShadow: "0 1px 2px rgba(20,18,15,.05)",
+        boxShadow: highlight
+          ? "0 0 0 2px rgba(0,168,107,.45), 0 1px 2px rgba(20,18,15,.05)"
+          : "0 1px 2px rgba(20,18,15,.05)",
+        transition: "background-color 0.6s ease, box-shadow 0.6s ease",
       }}
     >
       <div

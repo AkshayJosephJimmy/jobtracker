@@ -11,6 +11,7 @@ type Application = Omit<PrismaApplication, 'applyDate' | 'createdAt' | 'updatedA
   applyDate: string;
   createdAt: string;
   updatedAt: string;
+  daysSinceContact: number;
 };
 
 type ApplicationContextType={
