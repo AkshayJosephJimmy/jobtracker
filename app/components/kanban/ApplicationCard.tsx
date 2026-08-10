@@ -10,6 +10,7 @@ type Application = {
   dateApplied: string;
   followUpStatus: string;
   updatedAt:string;
+  daysSinceContact:string
 };
 
 type ApplicationCardProps = {
@@ -172,7 +173,7 @@ async function handleDelete(){
               className="text-[9px] font-semibold"
               style={{ color: followUpColor, opacity: 0.75, fontFamily: "var(--font-jetbrains-mono), monospace" }}
             >
-              {application.updatedAt}d
+              {application.daysSinceContact}d
             </span>
           )}
         </div>

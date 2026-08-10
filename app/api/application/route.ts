@@ -107,7 +107,8 @@ export async function GET(){
 
         return{
             ...app,
-            updatedAt :daysSince
+            daysSinceContact: daysSince,
+            isFollowUpDue: daysSince >= 7 && app.status !== 'REJECTED'
         }
 
         })
