@@ -1,0 +1,9 @@
+//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
+//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
+
+import OpenAI from 'openai'
+
+
+export const openai=new OpenAI({
+    apiKey:process.env.OPENAI_API_KEY
+})
