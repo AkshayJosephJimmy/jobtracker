@@ -31,13 +31,72 @@ Rules:
 export async function POST(req:NextRequest){
 
     const supabase=await createClient()
+    const {imageBase64,mimeType}=await req.json()
 
     const {data:{user}}= await supabase.auth.getUser()
     if(!user){
        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 }) 
     }
+    try{
 
-    const{image}=await req.json()
+        
+        const{image}=await req.json()
+       const completion= await openai.chat.completions.create({
+            model:"gpt-4o",
+            max_tokens:1500,
+            messages:[
+                {
+          role: 'user',
+          content: [
+            {
+              type: 'image_url',
+              image_url: {
+                url: `data:${mimeType || 'image/png'};base64,${imageBase64}`,
+                detail: 'high'
+              }
+            },
+            { type: 'text', text: EXTRACTION_PROMPT }
+          ]
+        }
+            ]
+        })
+
+       const raw= completion.choices[0].message?.content ?? ''
+       const cleaned = raw.replace(/```json/g, '').replace(/```/g, '').trim()
+
+       let parsed
+    try {
+      parsed = JSON.parse(cleaned)
+    } catch {
+      console.error('Model returned unparseable output:', raw)
+      return NextResponse.json(
+        { error: 'Could not read that screenshot. Try a clearer image.' },
+        { status: 422 }
+      )
+    }
+
+    return NextResponse.json({
+      companyName: parsed.companyName ?? null,
+      role: parsed.role ?? null,
+      portal: KNOWN_PORTALS.includes(parsed.portal) ? parsed.portal : null,
+      jobDescription: parsed.jobDescription ?? null
+    })
+
+
+        
+            
+
+            
+            
+        
+          
+
+
+
+    }
+    catch(err){
+        return NextResponse.json({error:"image not found"},{status:404})
+    }
 
 
 

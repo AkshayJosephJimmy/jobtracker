@@ -4,6 +4,7 @@ import { useState, FormEvent } from "react";
 import { toast } from "react-hot-toast";
 import { createClient } from "@/lib/supabase/client";
 import {useApplication} from "@/app/context/ApplicationsContext"
+import ScreenshotUpload from "./ScreenshotUpload";
 
 type NewApplication = {
   userId: string;
@@ -27,11 +28,15 @@ type AddApplicationModalProps = {
 
 const STATUSES = ['APPLIED', 'SCREENING', 'INTERVIEW', 'REJECTED'];
 
-const fieldStyle = {
-  color: "#00ff46",
-  borderColor: "#00ff46",
-  boxShadow: "inset 0 0 4px rgba(0,255,70,0.15)",
-};
+function todayISO() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+const TODAY = todayISO();
 
 function AddApplicationModal({ isOpen, onClose, onAdd }: AddApplicationModalProps) {
   const{setApplication}=useApplication()
@@ -40,14 +45,24 @@ function AddApplicationModal({ isOpen, onClose, onAdd }: AddApplicationModalProp
   const [status, setStatus] = useState(STATUSES[0]);
   const [portal, setPortal] = useState("");
   const [jobDescription, setJobDescription] = useState("");
-  const [applyDate, setApplyDate] = useState("");
+  const [applyDate, setApplyDate] = useState(TODAY);
   const [resumeName, setResumeName] = useState("");
   const [resumeLink, setResumeLink] = useState("");
   const [hasReferral, setHasReferral] = useState(false);
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [aiFilled, setAiFilled] = useState<Set<string>>(new Set());
 
   if (!isOpen) return null;
+
+  function clearAiFilled(field: string) {
+    setAiFilled((prev) => {
+      if (!prev.has(field)) return prev;
+      const next = new Set(prev);
+      next.delete(field);
+      return next;
+    });
+  }
 
   function resetForm() {
     setCompanyName("");
@@ -55,11 +70,12 @@ function AddApplicationModal({ isOpen, onClose, onAdd }: AddApplicationModalProp
     setStatus(STATUSES[0]);
     setPortal("");
     setJobDescription("");
-    setApplyDate("");
+    setApplyDate(TODAY);
     setResumeName("");
     setResumeLink("");
     setHasReferral(false);
     setNotes("");
+    setAiFilled(new Set());
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -120,216 +136,317 @@ function AddApplicationModal({ isOpen, onClose, onAdd }: AddApplicationModalProp
     onClose();
   }
 
+  function AiBadge() {
+    return (
+      <span className="ml-1.5 rounded-sm bg-indigo-50 px-1 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-indigo-500">
+        AI
+      </span>
+    );
+  }
+
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
       onClick={handleClose}
     >
       <div
-        className="relative z-10 w-full max-w-md border-2 rounded-md p-6 sm:p-8 bg-black max-h-[90vh] overflow-y-auto"
-        style={{
-          fontFamily: "var(--font-vt323), monospace",
-          borderColor: "#00ff46",
-          boxShadow: "0 0 3px rgba(0,255,70,0.6), 0 0 8px rgba(0,255,70,0.2)",
-        }}
+        className="relative z-10 w-full max-w-md rounded-md border border-gray-200 bg-white p-6 max-h-[90vh] overflow-y-auto shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-6 flex items-center justify-between">
-          <h1
-            className="text-3xl tracking-widest"
-            style={{ color: "#00ff46", textShadow: "0 0 3px rgba(0,255,70,0.5)" }}
-          >
-            &gt; NEW_APPLICATION
+        <div className="mb-5 flex items-center justify-between">
+          <h1 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+            New Application
           </h1>
           <button
             type="button"
             onClick={handleClose}
             aria-label="Close"
-            className="text-2xl leading-none px-2"
-            style={{ color: "#00ff46", textShadow: "0 0 3px rgba(0,255,70,0.5)" }}
+            className="text-lg leading-none px-1 text-gray-400 hover:text-gray-600"
           >
-            [X]
+            &times;
           </button>
         </div>
 
+        <ScreenshotUpload
+          onFileSelected={(file) => console.log('file:', file)}
+          isParsing={false}
+          error={null}
+          onClearError={() => {}}
+        />
+
+        <div className="my-5 flex items-center gap-3">
+          <div className="h-px flex-1 bg-gray-200" />
+          <span className="text-xs uppercase tracking-wide text-gray-400">
+            or enter manually
+          </span>
+          <div className="h-px flex-1 bg-gray-200" />
+        </div>
+
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <label htmlFor="companyName" className="text-xl" style={{ color: "#00ff46" }}>
-              &gt; COMPANY:
-            </label>
-            <input
-              id="companyName"
-              type="text"
-              required
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              className="bg-black text-xl px-3 py-2 rounded-sm outline-none border-2 caret-[#00ff46]"
-              style={fieldStyle}
-              placeholder="Tech Company"
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label htmlFor="role" className="text-xl" style={{ color: "#00ff46" }}>
-              &gt; ROLE:
-            </label>
-            <input
-              id="role"
-              type="text"
-              required
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="bg-black text-xl px-3 py-2 rounded-sm outline-none border-2 caret-[#00ff46]"
-              style={fieldStyle}
-              placeholder="Frontend Developer"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1">
-              <label htmlFor="status" className="text-xl" style={{ color: "#00ff46" }}>
-                &gt; STATUS:
-              </label>
-              <select
-                id="status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="bg-black text-xl px-3 py-2 rounded-sm outline-none border-2"
-                style={fieldStyle}
+              <label
+                htmlFor="companyName"
+                className="flex items-center text-xs uppercase tracking-wide text-gray-500"
               >
-                {STATUSES.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
+                Company
+                {aiFilled.has("companyName") && <AiBadge />}
+              </label>
+              <input
+                id="companyName"
+                type="text"
+                required
+                value={companyName}
+                onChange={(e) => {
+                  setCompanyName(e.target.value);
+                  clearAiFilled("companyName");
+                }}
+                className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+                  aiFilled.has("companyName")
+                    ? "border-gray-200 border-l-2 border-l-indigo-400"
+                    : "border-gray-200"
+                }`}
+                placeholder="Tech Company"
+              />
             </div>
 
             <div className="flex flex-col gap-1">
-              <label htmlFor="portal" className="text-xl" style={{ color: "#00ff46" }}>
-                &gt; PORTAL:
+              <label
+                htmlFor="role"
+                className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+              >
+                Role
+                {aiFilled.has("role") && <AiBadge />}
+              </label>
+              <input
+                id="role"
+                type="text"
+                required
+                value={role}
+                onChange={(e) => {
+                  setRole(e.target.value);
+                  clearAiFilled("role");
+                }}
+                className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+                  aiFilled.has("role")
+                    ? "border-gray-200 border-l-2 border-l-indigo-400"
+                    : "border-gray-200"
+                }`}
+                placeholder="Frontend Developer"
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label
+              htmlFor="status"
+              className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+            >
+              Status
+              {aiFilled.has("status") && <AiBadge />}
+            </label>
+            <select
+              id="status"
+              value={status}
+              onChange={(e) => {
+                setStatus(e.target.value);
+                clearAiFilled("status");
+              }}
+              className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+                aiFilled.has("status")
+                  ? "border-gray-200 border-l-2 border-l-indigo-400"
+                  : "border-gray-200"
+              }`}
+            >
+              {STATUSES.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1">
+              <label
+                htmlFor="portal"
+                className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+              >
+                Portal
+                {aiFilled.has("portal") && <AiBadge />}
               </label>
               <input
                 id="portal"
                 type="text"
                 value={portal}
-                onChange={(e) => setPortal(e.target.value)}
-                className="bg-black text-xl px-3 py-2 rounded-sm outline-none border-2 caret-[#00ff46]"
-                style={fieldStyle}
+                onChange={(e) => {
+                  setPortal(e.target.value);
+                  clearAiFilled("portal");
+                }}
+                className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+                  aiFilled.has("portal")
+                    ? "border-gray-200 border-l-2 border-l-indigo-400"
+                    : "border-gray-200"
+                }`}
                 placeholder="LinkedIn"
               />
             </div>
-          </div>
 
-          <div className="flex flex-col gap-1">
-            <label htmlFor="jobDescription" className="text-xl" style={{ color: "#00ff46" }}>
-              &gt; JOB_DESCRIPTION:
-            </label>
-            <textarea
-              id="jobDescription"
-              rows={3}
-              value={jobDescription}
-              onChange={(e) => setJobDescription(e.target.value)}
-              className="bg-black text-xl px-3 py-2 rounded-sm outline-none border-2 caret-[#00ff46] resize-none"
-              style={fieldStyle}
-              placeholder="Paste the job description..."
-            />
-          </div>
-
-          <div className="flex flex-col gap-1">
-            <label htmlFor="applyDate" className="text-xl" style={{ color: "#00ff46" }}>
-              &gt; APPLY_DATE:
-            </label>
-            <input
-              id="applyDate"
-              type="date"
-              required
-              value={applyDate}
-              onChange={(e) => setApplyDate(e.target.value)}
-              className="bg-black text-xl px-3 py-2 rounded-sm outline-none border-2 caret-[#00ff46]"
-              style={fieldStyle}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
-              <label htmlFor="resumeName" className="text-xl" style={{ color: "#00ff46" }}>
-                &gt; RESUME_NAME:
+              <label
+                htmlFor="resumeName"
+                className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+              >
+                Resume Name
+                {aiFilled.has("resumeName") && <AiBadge />}
               </label>
               <input
                 id="resumeName"
                 type="text"
                 value={resumeName}
-                onChange={(e) => setResumeName(e.target.value)}
-                className="bg-black text-xl px-3 py-2 rounded-sm outline-none border-2 caret-[#00ff46]"
-                style={fieldStyle}
+                onChange={(e) => {
+                  setResumeName(e.target.value);
+                  clearAiFilled("resumeName");
+                }}
+                className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+                  aiFilled.has("resumeName")
+                    ? "border-gray-200 border-l-2 border-l-indigo-400"
+                    : "border-gray-200"
+                }`}
                 placeholder="resume_v2.pdf"
-              />
-            </div>
-
-            <div className="flex flex-col gap-1">
-              <label htmlFor="resumeLink" className="text-xl" style={{ color: "#00ff46" }}>
-                &gt; RESUME_LINK:
-              </label>
-              <input
-                id="resumeLink"
-                type="url"
-                value={resumeLink}
-                onChange={(e) => setResumeLink(e.target.value)}
-                className="bg-black text-xl px-3 py-2 rounded-sm outline-none border-2 caret-[#00ff46]"
-                style={fieldStyle}
-                placeholder="https://..."
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="notes" className="text-xl" style={{ color: "#00ff46" }}>
-              &gt; NOTES:
+            <label
+              htmlFor="resumeLink"
+              className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+            >
+              Resume Link
+              {aiFilled.has("resumeLink") && <AiBadge />}
             </label>
-            <textarea
-              id="notes"
-              rows={2}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="bg-black text-xl px-3 py-2 rounded-sm outline-none border-2 caret-[#00ff46] resize-none"
-              style={fieldStyle}
-              placeholder="Any extra notes..."
+            <input
+              id="resumeLink"
+              type="url"
+              value={resumeLink}
+              onChange={(e) => {
+                setResumeLink(e.target.value);
+                clearAiFilled("resumeLink");
+              }}
+              className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+                aiFilled.has("resumeLink")
+                  ? "border-gray-200 border-l-2 border-l-indigo-400"
+                  : "border-gray-200"
+              }`}
+              placeholder="https://..."
             />
           </div>
 
-          <label htmlFor="hasReferral" className="flex items-center gap-2 text-xl cursor-pointer" style={{ color: "#00ff46" }}>
+          <label
+            htmlFor="hasReferral"
+            className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+          >
             <input
               id="hasReferral"
               type="checkbox"
               checked={hasReferral}
               onChange={(e) => setHasReferral(e.target.checked)}
-              className="w-5 h-5 accent-[#00ff46]"
+              className="h-4 w-4 accent-indigo-500"
             />
-            &gt; HAS_REFERRAL?
+            Referral
           </label>
 
-          <div className="flex flex-row gap-4 mt-2">
+          <div className="flex flex-col gap-1">
+            <label
+              htmlFor="jobDescription"
+              className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+            >
+              Job Description
+              {aiFilled.has("jobDescription") && <AiBadge />}
+            </label>
+            <textarea
+              id="jobDescription"
+              rows={3}
+              value={jobDescription}
+              onChange={(e) => {
+                setJobDescription(e.target.value);
+                clearAiFilled("jobDescription");
+              }}
+              className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 resize-none ${
+                aiFilled.has("jobDescription")
+                  ? "border-gray-200 border-l-2 border-l-indigo-400"
+                  : "border-gray-200"
+              }`}
+              placeholder="Paste the job description..."
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label
+              htmlFor="notes"
+              className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+            >
+              Notes
+              {aiFilled.has("notes") && <AiBadge />}
+            </label>
+            <textarea
+              id="notes"
+              rows={2}
+              value={notes}
+              onChange={(e) => {
+                setNotes(e.target.value);
+                clearAiFilled("notes");
+              }}
+              className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 resize-none ${
+                aiFilled.has("notes")
+                  ? "border-gray-200 border-l-2 border-l-indigo-400"
+                  : "border-gray-200"
+              }`}
+              placeholder="Any extra notes..."
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label
+              htmlFor="applyDate"
+              className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+            >
+              Apply Date
+              {aiFilled.has("applyDate") && <AiBadge />}
+            </label>
+            <input
+              id="applyDate"
+              type="date"
+              required
+              max={TODAY}
+              value={applyDate}
+              onChange={(e) => {
+                setApplyDate(e.target.value);
+                clearAiFilled("applyDate");
+              }}
+              className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+                aiFilled.has("applyDate")
+                  ? "border-gray-200 border-l-2 border-l-indigo-400"
+                  : "border-gray-200"
+              }`}
+            />
+          </div>
+
+          <div className="flex flex-row gap-3 mt-2">
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 text-xl tracking-widest py-2 rounded-sm border-2 transition-colors"
-              style={{ color: "#00ff46", borderColor: "#00ff46", opacity: 0.7 }}
+              className="flex-1 text-sm font-medium py-2 rounded-sm border border-gray-200 text-gray-600 transition-colors hover:bg-gray-50"
             >
-              [ CANCEL ]
+              Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="flex-1 text-xl tracking-widest py-2 rounded-sm border-2 transition-colors disabled:opacity-50"
-              style={{
-                color: "#00ff46",
-                borderColor: "#00ff46",
-                textShadow: "0 0 3px rgba(0,255,70,0.5)",
-                boxShadow: "0 0 4px rgba(0,255,70,0.25)",
-              }}
+              className="flex-1 text-sm font-medium py-2 rounded-sm border border-gray-800 bg-gray-800 text-white transition-colors hover:bg-gray-700 disabled:opacity-50"
             >
-              {submitting ? "SAVING..." : "[ SAVE ]"}
+              {submitting ? "Saving..." : "Save"}
             </button>
           </div>
         </form>
