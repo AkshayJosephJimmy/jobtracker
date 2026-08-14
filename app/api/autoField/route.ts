@@ -40,7 +40,7 @@ export async function POST(req:NextRequest){
     try{
 
         
-        const{image}=await req.json()
+       
        const completion= await openai.chat.completions.create({
             model:"gpt-4o",
             max_tokens:1500,
@@ -95,7 +95,7 @@ export async function POST(req:NextRequest){
 
     }
     catch(err){
-        return NextResponse.json({error:"image not found"},{status:404})
+        return NextResponse.json({error:`Image not found ${err}`},{status:404})
     }
 
 

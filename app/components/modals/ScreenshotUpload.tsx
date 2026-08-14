@@ -16,7 +16,7 @@ function ScreenshotUpload({
   onClearError,
 }: ScreenshotUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const [errors, setError] = useState<string | null>(null);
+  
   const inputRef = useRef<HTMLInputElement>(null);
 
   function handleClick() {
@@ -49,18 +49,7 @@ function ScreenshotUpload({
     if (file) onFileSelected(file);
   }
 
-  async function handleFile(file: File) {
-if (!file.type.startsWith('image/')) {
-    setError('Please upload an image')
-    return
-  }
-  if (file.size > 5 * 1024 * 1024) {
-    setError('Image must be under 5MB')
-    return
-  }
-  
 
-  }
 
   let borderClass = "border-dashed border-gray-300";
   let bgClass = "bg-gray-50";

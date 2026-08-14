@@ -28,6 +28,7 @@ type AddApplicationModalProps = {
 
 const STATUSES = ['APPLIED', 'SCREENING', 'INTERVIEW', 'REJECTED'];
 
+
 function todayISO() {
   const now = new Date();
   const year = now.getFullYear();
@@ -39,6 +40,8 @@ function todayISO() {
 const TODAY = todayISO();
 
 function AddApplicationModal({ isOpen, onClose, onAdd }: AddApplicationModalProps) {
+  const [isParsing, setIsParsing] = useState(false)
+const [parseError, setParseError] = useState<string | null>(null)
   const{setApplication}=useApplication()
   const [companyName, setCompanyName] = useState("");
   const [role, setRole] = useState("");
@@ -136,6 +139,63 @@ function AddApplicationModal({ isOpen, onClose, onAdd }: AddApplicationModalProp
     onClose();
   }
 
+  async function handleFileSelected(file: File) {
+
+    if (!file.type.startsWith('image/')) {
+    setParseError('Please upload an image')
+    return
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    setParseError('Image must be under 5MB')
+    return
+  }
+
+    setIsParsing(true)
+    setParseError(null)
+try{
+
+  const base64=await new Promise<string>((resolve,reject)=>{
+    const reader=new FileReader()
+    reader.onload=()=>resolve((reader.result as string).split(',')[1])
+    reader.onerror=()=>reject(new Error('Failed to read file'))
+    
+    reader.readAsDataURL(file)
+  })
+
+  const response=await fetch('/api/autoField',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify({imageBase64:base64,mimeType:file.type})
+  })
+if(!response.ok){
+setParseError('Failed to parse image')
+return
+
+
+}
+const data=await response.json()
+if (data.companyName) setCompanyName(data.companyName)
+if (data.role) setRole(data.role)
+if (data.portal) setPortal(data.portal)
+if (data.jobDescription) setJobDescription(data.jobDescription)
+
+
+
+
+
+
+}catch(error){
+  setParseError('Failed to parse image')
+  console.error(error)
+
+}
+
+
+   
+    }
+
   function AiBadge() {
     return (
       <span className="ml-1.5 rounded-sm bg-indigo-50 px-1 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-indigo-500">
@@ -168,7 +228,7 @@ function AddApplicationModal({ isOpen, onClose, onAdd }: AddApplicationModalProp
         </div>
 
         <ScreenshotUpload
-          onFileSelected={(file) => console.log('file:', file)}
+          onFileSelected={(file) => handleFileSelected(file)}
           isParsing={false}
           error={null}
           onClearError={() => {}}
