@@ -82,28 +82,10 @@ export async function POST(req:NextRequest){
       jobDescription: parsed.jobDescription ?? null
     })
 
-
-        
-            
-
-            
-            
-        
-          
-
-
-
     }
     catch(err){
         return NextResponse.json({error:`Image not found ${err}`},{status:404})
     }
-
-
-
-    
-
-
-
 }
 
 

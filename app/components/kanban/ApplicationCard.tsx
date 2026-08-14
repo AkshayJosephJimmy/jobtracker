@@ -3,7 +3,8 @@ import {useApplication,} from "../../context/ApplicationsContext"
 type Application = {
   id: string;
   title: string;
-  company: string;
+  companyName: string;
+  role: string;
   job: string;
   portal: string;
   status: string;
@@ -138,14 +139,14 @@ async function handleDelete(){
           className="text-[13px] font-bold leading-tight tracking-tight truncate"
           style={{ color: "#14120f" }}
         >
-          {application.title}
+          {application.companyName}
         </h3>
       </div>
       <p
         className="text-[11.5px] font-medium mt-0.5 truncate"
         style={{ color: "#6b6660" }}
       >
-        {application.company}
+        {application.role}
       </p>
 
       <div className="flex items-center gap-1.5 mt-2">
@@ -183,12 +184,12 @@ async function handleDelete(){
         </div>
       </div>
 
-      <div
+      {/* <div
         className="text-[10.5px] mt-2"
         style={{ color: "#a8a29a", fontFamily: "var(--font-jetbrains-mono), monospace" }}
       >
         Applied {application.dateApplied}
-      </div>
+      </div> */}
 
       <button
         className="mt-2.5 w-full text-[11px] font-semibold tracking-wide py-1.5 rounded-[7px] transition-colors"
