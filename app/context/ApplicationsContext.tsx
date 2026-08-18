@@ -18,7 +18,9 @@ type ApplicationContextType={
     application:Application[],
     setApplication:React.Dispatch<React.SetStateAction<Application[]>>,
     selectedId:string | null,
-    setSelectedId:React.Dispatch<React.SetStateAction<string | null>>
+    setSelectedId:React.Dispatch<React.SetStateAction<string | null>>,
+    query:string,
+    setQuery:React.Dispatch<React.SetStateAction<string>>
 }
 
 
@@ -31,6 +33,7 @@ export  function ApplicationProvider({children}:{children:ReactNode}){
     
     const [application,setApplication]= useState<Application[]>([])
     const [selectedId,setSelectedId]=useState<string | null>(null)
+    const [query,setQuery]=useState<string>("")
     useEffect(() => {
         async function loadApplication(){
 
@@ -43,7 +46,7 @@ export  function ApplicationProvider({children}:{children:ReactNode}){
 
 
     return(
-        <ApplicationContext.Provider value={{application,setApplication,selectedId,setSelectedId}} >
+        <ApplicationContext.Provider value={{application,setApplication,selectedId,setSelectedId,query,setQuery}} >
             {children}
 
 

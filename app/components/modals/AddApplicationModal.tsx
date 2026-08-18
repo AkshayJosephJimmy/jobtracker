@@ -17,6 +17,7 @@ type NewApplication = {
   resumeName: string;
   resumeLink: string;
   hasReferral: boolean;
+  firstResponseAt: Date | null;
   notes: string;
 };
 
@@ -108,6 +109,7 @@ const [parseError, setParseError] = useState<string | null>(null)
       resumeLink,
       hasReferral,
       notes,
+      firstResponseAt: null,
     };
 
     const response = await fetch("/api/application", {

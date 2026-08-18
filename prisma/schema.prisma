@@ -44,6 +44,7 @@ model Application {
   aiAnalysis     Json?     @map("ai_analysis")
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt @map("updated_at")
+  firstResponseAt DateTime?  @map("first_response_at")
 
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   followUps FollowUp[]

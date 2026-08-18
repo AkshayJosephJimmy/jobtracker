@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import {useApplication,} from "../../context/ApplicationsContext"
 import {fetchApplications} from "../../utility/fetchApplications"
 import ApplicationDrawer from "../drawer/ApplicationDrawer";
+import { searchApplications } from "@/app/utility/searchApplications";
 
 
 
@@ -26,7 +27,7 @@ const DEFAULT_COLUMN_STYLE = { dot: "#8a857c", bg: "#f2efe9", border: "rgba(20,1
 
 function KanbanColumn({ title }: KanbanColumnProps) {
  
-  const {application,setApplication}=useApplication()
+  const {application,setApplication,query}=useApplication()
   const [isModalOpen, setIsModalOpen] = useState(false);
 
 
@@ -45,8 +46,11 @@ function KanbanColumn({ title }: KanbanColumnProps) {
     console.log("fdfd",application)
 
     const columnStyle = COLUMN_STYLES[title.trim().toUpperCase()] ?? DEFAULT_COLUMN_STYLE;
+    const searchResults = searchApplications(application,query);
+    console.log("query",query)
+    console.log("searchResults",searchResults)
 
-    const columnApplications = application
+    const columnApplications = searchResults
       .filter((app) => app.status === title)
       .sort((a, b) => b.daysSinceContact - a.daysSinceContact);
 

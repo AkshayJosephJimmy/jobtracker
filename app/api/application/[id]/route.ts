@@ -12,6 +12,15 @@ export async function PATCH(req:NextRequest,{params}:{params:Promise<{id:string}
 
     try{
 
+        const application=await prisma.application.findUnique({where:{id:id}})
+        if (!application) {
+        return NextResponse.json({ error: 'Not found' }, { status: 404 })
+        }
+
+        if(application.firstResponseAt){
+
+        }
+
         
         const updatedApplication=await prisma.application.update(
             {
