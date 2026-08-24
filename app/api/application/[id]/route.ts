@@ -7,18 +7,28 @@ import {createClient} from "@/lib/supabase/server"
 
 export async function PATCH(req:NextRequest,{params}:{params:Promise<{id:string}>}){
 
-    const {id}=await params
-    const {newStatus}=await req.json()
+    
 
     try{
+        const {id}=await params
+        const {newStatus}=await req.json()
+        const updatedData:any={status:newStatus}
 
-        const application=await prisma.application.findUnique({where:{id:id}})
-        if (!application) {
+        const existing=await prisma.application.findUnique({where:{id:id}})
+        if (!existing) {
         return NextResponse.json({ error: 'Not found' }, { status: 404 })
         }
 
-        if(application.firstResponseAt){
+        if(newStatus!=='APPLIED' && !existing.firstResponseAt){
 
+            updatedData.firstResponseAt=new Date()
+
+
+
+
+        }
+        if(newStatus==="APPLIED" && existing.firstResponseAt){
+            updatedData.firstResponseAt=null
         }
 
         
@@ -26,10 +36,11 @@ export async function PATCH(req:NextRequest,{params}:{params:Promise<{id:string}
             {
                 where: {id: id},
                 
-                data:{status:newStatus}
+                data:updatedData
                 
             }
         )
+        
         return NextResponse.json(updatedApplication)
         
     }catch(err){

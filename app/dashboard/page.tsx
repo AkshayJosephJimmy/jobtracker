@@ -7,6 +7,8 @@ import { useEffect } from "react";
 import { ApplicationProvider } from "../context/ApplicationsContext";
 import ApplicationDrawer from "../components/drawer/ApplicationDrawer";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
+import AnalyticsBody from "../components/analytics/AnalyticsBody";
+
 
 
  function Dashboard() {
@@ -42,7 +44,7 @@ fetchUser()
         fontFamily: "var(--font-plus-jakarta), system-ui, sans-serif",
       }}
     >
-      <DashboardHeader />
+      
 
       <div
         className="flex items-center gap-3 px-5 py-2"
@@ -84,6 +86,8 @@ fetchUser()
           Portal ▾
         </div>
       </div>
+       
+      
 
       <KanbanBoard />
       

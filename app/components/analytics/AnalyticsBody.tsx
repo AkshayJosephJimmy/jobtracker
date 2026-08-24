@@ -1,7 +1,6 @@
 
 
-
-function analytics(){
+function AnalyticsBody(){
 
 
 
@@ -14,5 +13,4 @@ function analytics(){
     )
 }
 
-export default analytics
-     
+export default AnalyticsBody;

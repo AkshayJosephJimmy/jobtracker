@@ -42,10 +42,11 @@ import { useState } from "react";
         <div
           className="px-3.5 py-1.5 rounded-[7px] text-[12.5px] font-semibold"
           style={{ backgroundColor: "#fff", color: "#14120f", boxShadow: "0 1px 2px rgba(0,0,0,.08)" }}
+          onClick={() => router.push("/dashboard")}
         >
           Board
         </div>
-        <div onClick={() => router.push("/analytics")} className="px-3.5 py-1.5 rounded-[7px] text-[12.5px] font-medium" style={{ color: "#6b6660" }}>
+        <div onClick={() => router.push("dashboard/analytics")} className="px-3.5 py-1.5 rounded-[7px] text-[12.5px] font-medium" style={{ color: "#6b6660" }}>
           Analytics
         </div>
         <div className="px-3.5 py-1.5 rounded-[7px] text-[12.5px] font-medium" style={{ color: "#6b6660" }}>
