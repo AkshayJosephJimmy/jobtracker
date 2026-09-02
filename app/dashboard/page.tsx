@@ -35,7 +35,7 @@ fetchUser()
 
 
   return (
-    <ApplicationProvider>
+    
 
     <div
       style={{
@@ -92,7 +92,7 @@ fetchUser()
       <KanbanBoard />
       
     </div>
-    </ApplicationProvider>
+    
   )
 }
 

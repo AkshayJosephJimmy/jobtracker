@@ -37,6 +37,8 @@ function KanbanBoard() {
 
 
        })
+       const updatedApplication=await res.json()
+       setApplication(prev=>prev.map(app=>app.id===updatedApplication.id ? updatedApplication:app))
 
        if (!res.ok){
         throw new Error("card not in the right column")

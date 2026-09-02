@@ -1,6 +1,6 @@
 "use client"
 import {useApplication} from "../../context/ApplicationsContext";
-import {getPortalDetails} from '../../utility/analytics'
+import {getAnalyticsData} from '../../utility/analytics'
 
 
 /**
@@ -44,8 +44,8 @@ const F = {
 
 /* ---------- types ---------- */
 
-export type Stat = { label: string; value: string; delta?: string; deltaTone?: 'up' | 'down' | 'warn'; sub?: string };
-export type Portal = { name: string; applied: number; converted: number; color?: string };
+export type Stat = { label: string; value: string; };
+export type Portal = { name: string;count:number,responseCount:number  };
 export type FunnelStage = { name: string; count: number; color?: string };
 export type AnalyticsData = {
   stats: Stat[];
@@ -59,34 +59,34 @@ export type AnalyticsData = {
 
 /* ---------- demo data (delete once wired) ---------- */
 
-const DEMO: AnalyticsData = {
-  stats: [
-    { label: 'TOTAL APPLIED', value: '420', delta: '+18', deltaTone: 'up', sub: 'this week' },
-    { label: 'RESPONSE RATE', value: '22%', delta: '+3.1', deltaTone: 'up', sub: '92 of 420 replied' },
-    { label: 'GHOSTED', value: '286', delta: '68%', deltaTone: 'warn', sub: 'no reply in 21d+' },
-    { label: 'INTERVIEW RATE', value: '4.5%', delta: '-0.4', deltaTone: 'down', sub: '19 interviews' },
-  ],
-  portals: [
-    { name: 'Referral', applied: 24, converted: 10, color: C.green },
-    { name: 'Company site', applied: 88, converted: 27, color: C.violet },
-    { name: 'Wellfound', applied: 46, converted: 9, color: C.red },
-    { name: 'LinkedIn', applied: 174, converted: 24, color: C.blue },
-    { name: 'Indeed', applied: 88, converted: 5, color: C.ink3 },
-  ],
-  funnel: [
-    { name: 'Applied', count: 420, color: C.ink4 },
-    { name: 'Screening', count: 62, color: C.violet },
-    { name: 'Interview', count: 19, color: C.green },
-    { name: 'Offer', count: 2, color: C.lime },
-  ],
-  daily: Array.from({ length: 70 }, (_, i) => {
-    const d = new Date(); d.setDate(d.getDate() - (69 - i));
-    const n = [0, 0, 1, 2, 3, 4, 5, 5, 6, 7][Math.floor(Math.abs(Math.sin(i * 1.7)) * 10)];
-    return { date: d.toISOString().slice(0, 10), count: n };
-  }),
-  streak: 12,
-  dailyTarget: 5,
-};
+// const DEMO: AnalyticsData = {
+//   stats: [
+//     { label: 'TOTAL APPLIED', value: '420' },
+//     { label: 'RESPONSE RATE', value: '22%' },
+//     // { label: 'GHOSTED', value: '286'  },
+//     // { label: 'INTERVIEW RATE', value: '4.5%' },
+//   ],
+//   portals: [
+//     { name: 'Referral', applied: 24, converted: 10, color: C.green },
+//     { name: 'Company site', applied: 88, converted: 27, color: C.violet },
+//     { name: 'Wellfound', applied: 46, converted: 9, color: C.red },
+//     { name: 'LinkedIn', applied: 174, converted: 24, color: C.blue },
+//     { name: 'Indeed', applied: 88, converted: 5, color: C.ink3 },
+//   ],
+//   funnel: [
+//     { name: 'Applied', count: 420, color: C.ink4 },
+//     { name: 'Screening', count: 62, color: C.violet },
+//     { name: 'Interview', count: 19, color: C.green },
+//     { name: 'Offer', count: 2, color: C.lime },
+//   ],
+//   daily: Array.from({ length: 70 }, (_, i) => {
+//     const d = new Date(); d.setDate(d.getDate() - (69 - i));
+//     const n = [0, 0, 1, 2, 3, 4, 5, 5, 6, 7][Math.floor(Math.abs(Math.sin(i * 1.7)) * 10)];
+//     return { date: d.toISOString().slice(0, 10), count: n };
+//   }),
+//   streak: 12,
+//   dailyTarget: 5,
+// };
 
 /* ---------- small pieces ---------- */
 
@@ -107,11 +107,12 @@ function PanelTitle({ children, sub }: { children: React.ReactNode; sub?: string
   );
 }
 
-const toneColor = (t?: Stat['deltaTone']) => (t === 'up' ? C.green : t === 'down' ? C.red : C.amber);
+//const toneColor = (t?: Stat['deltaTone']) => (t === 'up' ? C.green : t === 'down' ? C.red : C.amber);
 
 /* ---------- sections ---------- */
 
 function StatRow({ stats }: { stats: Stat[] }) {
+  
   return (
     <div style={{ display: 'grid', gridTemplateColumns: `repeat(${stats.length}, 1fr)`, gap: 12 }}>
       {stats.map((s) => (
@@ -119,9 +120,9 @@ function StatRow({ stats }: { stats: Stat[] }) {
           <div style={{ font: `400 8px ${F.pixel}`, color: C.ink3, letterSpacing: '.06em' }}>{s.label}</div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 7, marginTop: 9 }}>
             <div style={{ font: `800 28px ${F.mono}`, color: C.ink, letterSpacing: '-.02em' }}>{s.value}</div>
-            {s.delta && <div style={{ font: `700 11px ${F.mono}`, color: toneColor(s.deltaTone) }}>{s.delta}</div>}
+            {/* {s.delta && <div style={{ font: `700 11px ${F.mono}`, color: toneColor(s.deltaTone) }}>{s.delta}</div>} */}
           </div>
-          {s.sub && <div style={{ font: `400 11px ${F.sans}`, color: C.ink3, marginTop: 3 }}>{s.sub}</div>}
+          {/* {s.sub && <div style={{ font: `400 11px ${F.sans}`, color: C.ink3, marginTop: 3 }}>{s.sub}</div>} */}
         </Panel>
       ))}
     </div>
@@ -130,22 +131,22 @@ function StatRow({ stats }: { stats: Stat[] }) {
 
 /** Ranked by conversion rate. Bar length encodes volume, solid segment = converted. */
 function PortalEffectiveness({ portals }: { portals: Portal[] }) {
-  const ranked = [...portals].sort((a, b) => b.converted / b.applied - a.converted / a.applied);
-  const maxApplied = Math.max(...ranked.map((p) => p.applied));
+  const ranked = [...portals].sort((a, b) => b.responseCount / b.count - a.responseCount / a.count);
+  const maxApplied = Math.max(...ranked.map((p) => p.count));
 
   return (
     <Panel style={{ padding: '18px 20px' }}>
       <PanelTitle sub="Ranked by screening rate. Bar length = volume applied.">PORTAL EFFECTIVENESS</PanelTitle>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
         {ranked.map((p) => {
-          const rate = p.converted / p.applied;
+          const rate = p.responseCount / p.count;
           const color = p.color ?? C.violet;
           return (
             <div key={p.name}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 6 }}>
                 <div style={{ width: 7, height: 7, background: color }} />
                 <div style={{ font: `700 12.5px ${F.mono}`, color: C.ink }}>{p.name}</div>
-                <div style={{ font: `400 11px ${F.sans}`, color: C.ink3 }}>{p.applied} applied</div>
+                <div style={{ font: `400 11px ${F.sans}`, color: C.ink3 }}>{p.count} applied</div>
                 <div style={{ flex: 1 }} />
                 <div style={{ font: `800 14px ${F.mono}`, color }}>{Math.round(rate * 100)}%</div>
               </div>
@@ -153,7 +154,7 @@ function PortalEffectiveness({ portals }: { portals: Portal[] }) {
                 style={{
                   height: 20, borderRadius: 3, background: C.panel2,
                   border: `1px solid ${C.line2}`, overflow: 'hidden', display: 'flex',
-                  width: `${(p.applied / maxApplied) * 100}%`, minWidth: 60,
+                  width: `${(p.count / maxApplied) * 100}%`, minWidth: 60,
                 }}
               >
                 <div style={{ width: `${rate * 100}%`, background: color }} />
@@ -258,12 +259,15 @@ function Consistency({ daily, streak, dailyTarget }: Pick<AnalyticsData, 'daily'
 
 /* ---------- page ---------- */
 
-export default function AnalyticsPage({ data = DEMO }: { data?: AnalyticsData }) {
+export default function AnalyticsPage() {
 
     const {application}=useApplication()
+    const data=getAnalyticsData(application)
     console.log(application)
-    const result=getPortalDetails(application)
-    console.log(result)
+    // const result=getPortalDetails(application)
+    // const responseObject=getResponseRate(application)
+    // console.log(responseObject)
+    // console.log(result)
 
   return (
     <div style={{ background: C.bg, minHeight: '100vh', padding: '24px 28px', fontFamily: F.sans }}>
@@ -296,13 +300,13 @@ export default function AnalyticsPage({ data = DEMO }: { data?: AnalyticsData })
         </header>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <StatRow stats={data.stats} />
+          <StatRow stats={data.stat} />
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.35fr) minmax(0,1fr)', gap: 14 }}>
-            <PortalEffectiveness portals={data.portals} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 }}>
+            <PortalEffectiveness portals={data.portal} />
+            {/* <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 }}>
               <Funnel funnel={data.funnel} />
               <Consistency daily={data.daily} streak={data.streak} dailyTarget={data.dailyTarget} />
-            </div>
+            </div> */}
           </div>
         </div>
 
