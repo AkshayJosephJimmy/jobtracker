@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {createClient} from "@/lib/supabase/server"
+import {enrichApplication} from "@/app/utility/enrichApplication"
 
 
 
@@ -54,11 +55,17 @@ export async function POST(req:NextRequest) {
                 resumeLink,
                 hasReferral,
                 notes,
+               
                 
             }
         })
         
-        return NextResponse.json({message:"Application added successfully", application})
+
+        
+        
+        
+        
+        return NextResponse.json( enrichApplication(application))
     }catch(err){
           console.error("Prisma create failed:", err);
   return NextResponse.json({ message: `Failed to create application ${err}`, }, { status: 500 });

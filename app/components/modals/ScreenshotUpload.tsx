@@ -51,20 +51,20 @@ function ScreenshotUpload({
 
 
 
-  let borderClass = "border-dashed border-gray-300";
-  let bgClass = "bg-gray-50";
+  let borderClass = "border-dashed border-[#232833]";
+  let bgClass = "bg-[#171b23]";
   let cursorClass = "cursor-pointer";
 
   if (isParsing) {
-    borderClass = "border-dashed border-gray-200";
-    bgClass = "bg-gray-50 opacity-60";
+    borderClass = "border-dashed border-[#232833]";
+    bgClass = "bg-[#171b23] opacity-60";
     cursorClass = "cursor-default";
   } else if (error) {
-    borderClass = "border-solid border-red-300";
-    bgClass = "bg-red-50";
+    borderClass = "border-solid border-[#ff7b7f]/40";
+    bgClass = "bg-[#ff7b7f]/10";
   } else if (isDragging) {
-    borderClass = "border-solid border-indigo-400";
-    bgClass = "bg-indigo-50";
+    borderClass = "border-solid border-[#b8ff3c]/60";
+    bgClass = "bg-[#182008]";
   }
 
   return (
@@ -74,7 +74,7 @@ function ScreenshotUpload({
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={`relative flex h-[140px] w-full flex-col items-center justify-center gap-1 rounded-md border-2 px-4 text-center transition-colors ${borderClass} ${bgClass} ${cursorClass} ${
-        !isParsing && !error && !isDragging ? "hover:border-gray-400 group" : ""
+        !isParsing && !error && !isDragging ? "hover:border-[#3d5a14] group" : ""
       }`}
     >
       <input
@@ -88,7 +88,7 @@ function ScreenshotUpload({
       {isParsing && (
         <>
           <svg
-            className="h-6 w-6 animate-spin text-gray-400"
+            className="h-6 w-6 animate-spin text-[#6f7788]"
             viewBox="0 0 24 24"
             fill="none"
           >
@@ -106,21 +106,21 @@ function ScreenshotUpload({
               d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
             />
           </svg>
-          <p className="text-sm text-gray-600">Reading screenshot...</p>
-          <p className="text-xs text-gray-400">This takes a few seconds</p>
+          <p className="text-sm text-[#a9aeba]">Reading screenshot...</p>
+          <p className="text-xs text-[#6f7788]">This takes a few seconds</p>
         </>
       )}
 
       {!isParsing && error && (
         <>
-          <p className="text-sm text-red-600">{error}</p>
+          <p className="text-sm text-[#ff7b7f]">{error}</p>
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               onClearError();
             }}
-            className="text-xs font-medium text-red-500 underline hover:text-red-700"
+            className="text-xs font-medium text-[#ff7b7f] underline hover:text-[#ffb0b2]"
           >
             Try again
           </button>
@@ -128,13 +128,13 @@ function ScreenshotUpload({
       )}
 
       {!isParsing && !error && isDragging && (
-        <p className="text-sm font-medium text-indigo-500">Drop to read</p>
+        <p className="text-sm font-medium text-[#b8ff3c]">Drop to read</p>
       )}
 
       {!isParsing && !error && !isDragging && (
         <>
           <svg
-            className="h-6 w-6 text-gray-400 transition-colors group-hover:text-gray-500"
+            className="h-6 w-6 text-[#6f7788] transition-colors group-hover:text-[#a9aeba]"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -146,10 +146,10 @@ function ScreenshotUpload({
               d="M4 16.5V18a2 2 0 002 2h12a2 2 0 002-2v-1.5M7.5 9L12 4.5 16.5 9M12 4.5V15"
             />
           </svg>
-          <p className="text-sm text-gray-600 transition-colors group-hover:text-gray-800">
+          <p className="text-sm text-[#a9aeba] transition-colors group-hover:text-[#eceae4]">
             Drop a screenshot of the job posting
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-[#6f7788]">
             or paste with ⌘V · or click to browse
           </p>
         </>

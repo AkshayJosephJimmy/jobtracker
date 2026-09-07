@@ -86,3 +86,26 @@ return {
 
 
 }
+
+export function getWeeklyProgress(app:any,target=10){
+
+const now=new Date()
+const monday=new Date(now)
+monday.setDate(now.getDate()-((now.getDate()+6)%7))
+monday.setHours(0,0,0,0)
+console.log("analtucs",app)
+
+const applied=app.filter((application:any)=>new Date(application.applyDate)>= monday).length
+
+return {
+    applied,
+    target,
+    percent: Math.min(100, Math.round((applied / target) * 100))
+}
+
+
+
+
+
+
+}

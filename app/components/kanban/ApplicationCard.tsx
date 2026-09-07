@@ -11,7 +11,7 @@ type Application = {
   dateApplied: string;
   followUpStatus: string;
   updatedAt:string;
-  daysSinceContact:string
+  daysSinceContact:number
 };
 
 type ApplicationCardProps = {
@@ -19,13 +19,31 @@ type ApplicationCardProps = {
   highlight?: boolean;
 };
 
+const C = {
+  panel: "#12151b",
+  panel2: "#171b23",
+  line: "#232833",
+  ink: "#eceae4",
+  ink2: "#a9aeba",
+  ink3: "#6f7788",
+  lime: "#b8ff3c",
+  limeBg: "#182008",
+  limeLine: "#3d5a14",
+  red: "#ff7b7f",
+} as const;
+
+const F = {
+  mono: "var(--font-jetbrains-mono), monospace",
+  sans: "var(--font-plus-jakarta), system-ui, sans-serif",
+} as const;
+
 const FOLLOW_UP_COLOR: Record<string, string> = {
-  Pending: "#ffd700",
-  Sent: "#00ff46",
-  None: "#7a7a7a",
+  Pending: "#ffb43c",
+  Sent: "#4fd99b",
+  None: "#6f7788",
 };
 
-const PORTAL_PALETTE = ["#0a66c2", "#2557a7", "#e5484d", "#00a86b", "#f59e0b", "#5b3df5"];
+const PORTAL_PALETTE = ["#4a9eff", "#8b7bfa", "#ff7b7f", "#4fd99b", "#ffb43c", "#b8ff3c"];
 
 function hexToRgba(hex: string, alpha: number) {
   const clean = hex.replace("#", "");
@@ -37,7 +55,7 @@ function hexToRgba(hex: string, alpha: number) {
 }
 
 function portalDotColor(portal: string) {
-  if (!portal) return "#8a857c";
+  if (!portal) return C.ink3;
   let hash = 0;
   for (let i = 0; i < portal.length; i++) hash = (hash * 31 + portal.charCodeAt(i)) % PORTAL_PALETTE.length;
   return PORTAL_PALETTE[Math.abs(hash)];
@@ -47,6 +65,21 @@ function portalDotColor(portal: string) {
 
 function ApplicationCard({ application, highlight }: ApplicationCardProps) {
  const{setApplication,selectedId,setSelectedId}=useApplication()
+
+ function followUpStatus(){
+
+  if(application.daysSinceContact > 8){
+    application.followUpStatus="Pending"
+
+  }else if(application.daysSinceContact<8)
+  {
+    application.followUpStatus="Send"
+  }else if(!application.daysSinceContact){
+    application.followUpStatus="None"
+  }
+
+ }
+ followUpStatus()
 
 
 async function handleDelete(){
@@ -80,6 +113,7 @@ async function handleDelete(){
 
   const followUpColor =
     FOLLOW_UP_COLOR[application.followUpStatus] ?? "#00ff46";
+
   const followUpBg = hexToRgba(followUpColor, 0.14);
  
 
@@ -87,12 +121,12 @@ async function handleDelete(){
     <div
       className="group relative rounded-[10px] p-3 pr-2 pl-3.25 overflow-hidden"
       style={{
-        fontFamily: "var(--font-plus-jakarta), system-ui, sans-serif",
-        backgroundColor: highlight ? "rgba(0,168,107,.12)" : "#fff",
-        border: "1px solid rgba(20,18,15,.1)",
+        fontFamily: F.sans,
+        backgroundColor: highlight ? C.limeBg : C.panel2,
+        border: `1px solid ${highlight ? C.limeLine : C.line}`,
         boxShadow: highlight
-          ? "0 0 0 2px rgba(0,168,107,.45), 0 1px 2px rgba(20,18,15,.05)"
-          : "0 1px 2px rgba(20,18,15,.05)",
+          ? "0 0 0 2px rgba(184,255,60,.35)"
+          : "none",
         transition: "background-color 0.6s ease, box-shadow 0.6s ease",
       }}
     >
@@ -106,13 +140,13 @@ async function handleDelete(){
         aria-label="Delete application"
         onClick={handleDelete}
         className="absolute top-1.5 right-1.5 p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
-        style={{ color: "#a8a29a" }}
+        style={{ color: C.ink3 }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.color = "#c3363b";
-          e.currentTarget.style.backgroundColor = "rgba(229,72,77,.1)";
+          e.currentTarget.style.color = C.red;
+          e.currentTarget.style.backgroundColor = "rgba(255,123,127,.12)";
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.color = "#a8a29a";
+          e.currentTarget.style.color = C.ink3;
           e.currentTarget.style.backgroundColor = "transparent";
         }}
       >
@@ -137,14 +171,14 @@ async function handleDelete(){
       <div className="flex items-baseline gap-2 pr-5">
         <h3
           className="text-[13px] font-bold leading-tight tracking-tight truncate"
-          style={{ color: "#14120f" }}
+          style={{ color: C.ink }}
         >
           {application.companyName}
         </h3>
       </div>
       <p
         className="text-[11.5px] font-medium mt-0.5 truncate"
-        style={{ color: "#6b6660" }}
+        style={{ color: C.ink3 }}
       >
         {application.role}
       </p>
@@ -152,13 +186,13 @@ async function handleDelete(){
       <div className="flex items-center gap-1.5 mt-2">
         <div
           className="flex items-center gap-1 rounded-[5px] px-1.5 py-0.75"
-          style={{ backgroundColor: "rgba(20,18,15,.05)" }}
+          style={{ backgroundColor: C.panel }}
         >
           <div
             className="w-1.25 h-1.25 rounded-full"
             style={{ backgroundColor: portalDotColor(application.portal) }}
           />
-          <span className="text-[10px] font-semibold" style={{ color: "#4a463f" }}>
+          <span className="text-[10px] font-semibold" style={{ color: C.ink2 }}>
             {application.portal}
           </span>
         </div>
@@ -169,15 +203,16 @@ async function handleDelete(){
         >
           <span
             className="text-[9.5px] font-bold tracking-wide"
-            style={{ color: followUpColor, fontFamily: "var(--font-jetbrains-mono), monospace" }}
+            style={{ color: followUpColor, fontFamily: F.mono }}
           >
             {application.followUpStatus}
           </span>
           {application.updatedAt !== null && (
             <span
               className="text-[9px] font-semibold"
-              style={{ color: followUpColor, opacity: 0.75, fontFamily: "var(--font-jetbrains-mono), monospace" }}
-            >
+              style={{ color: followUpColor, opacity: 0.75, fontFamily: F.mono }}
+              >
+              
               {application.daysSinceContact}d
             </span>
           )}
@@ -195,8 +230,9 @@ async function handleDelete(){
         className="mt-2.5 w-full text-[11px] font-semibold tracking-wide py-1.5 rounded-[7px] transition-colors"
         onClick={()=>setSelectedId(application.id)}
         style={{
-          color: "#4a463f",
-          backgroundColor: "#f6f3ee",
+          color: C.ink2,
+          backgroundColor: C.panel,
+          border: `1px solid ${C.line}`,
         }}
       >
         View details

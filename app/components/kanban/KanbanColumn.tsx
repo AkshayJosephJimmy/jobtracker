@@ -17,13 +17,32 @@ type KanbanColumnProps = {
   title: string;
 };
 
+const C = {
+  panel: "#12151b",
+  panel2: "#171b23",
+  line: "#232833",
+  line2: "#1e232d",
+  ink: "#eceae4",
+  ink2: "#a9aeba",
+  ink3: "#6f7788",
+  ink4: "#4a5262",
+  violet: "#8b7bfa",
+  green: "#4fd99b",
+  red: "#ff7b7f",
+} as const;
+
+const F = {
+  mono: "var(--font-jetbrains-mono), monospace",
+  sans: "var(--font-plus-jakarta), system-ui, sans-serif",
+} as const;
+
 const COLUMN_STYLES: Record<string, { dot: string; bg: string; border: string }> = {
-  APPLIED: { dot: "#8a857c", bg: "#f2efe9", border: "rgba(20,18,15,.09)" },
-  SCREENING: { dot: "#5b3df5", bg: "#f1eefe", border: "rgba(91,61,245,.18)" },
-  INTERVIEW: { dot: "#00a86b", bg: "#ecf8f2", border: "rgba(0,168,107,.2)" },
-  REJECTED: { dot: "#b3ada4", bg: "#f0eeeb", border: "rgba(20,18,15,.07)" },
+  APPLIED: { dot: C.ink4, bg: C.panel, border: C.line },
+  SCREENING: { dot: C.violet, bg: C.panel, border: C.line },
+  INTERVIEW: { dot: C.green, bg: C.panel, border: C.line },
+  REJECTED: { dot: C.red, bg: C.panel, border: C.line },
 };
-const DEFAULT_COLUMN_STYLE = { dot: "#8a857c", bg: "#f2efe9", border: "rgba(20,18,15,.09)" };
+const DEFAULT_COLUMN_STYLE = { dot: C.ink4, bg: C.panel, border: C.line };
 
 function KanbanColumn({ title }: KanbanColumnProps) {
  
@@ -54,6 +73,8 @@ function KanbanColumn({ title }: KanbanColumnProps) {
       .filter((app) => app.status === title)
       .sort((a, b) => b.daysSinceContact - a.daysSinceContact);
 
+    // for the highlighting of new application when added
+        
     const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map());
     const seenIds = useRef<Set<string> | null>(null);
     const [flashId, setFlashId] = useState<string | null>(null);
@@ -85,7 +106,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
         <div
           {...provided.droppableProps}
           ref={provided.innerRef}
-          className="flex flex-col rounded-xl border w-72 shrink-0 min-h-80"
+          className="flex flex-col rounded-xl border w-72 shrink-0 scroll-auto min-h-80 max-h-170"
           style={{
             fontFamily: "var(--font-plus-jakarta), system-ui, sans-serif",
             backgroundColor: columnStyle.bg,
@@ -98,17 +119,17 @@ function KanbanColumn({ title }: KanbanColumnProps) {
               style={{ backgroundColor: columnStyle.dot }}
             />
             <div
-              className="text-[12.5px] font-bold tracking-wide"
-              style={{ color: "#14120f" }}
+              className="text-[11.5px] font-bold tracking-wide"
+              style={{ color: C.ink, fontFamily: F.mono }}
             >
               {title.trim().toUpperCase()}
             </div>
             <div
               className="text-[11px] font-bold rounded-[5px] px-1.5 py-0.5"
               style={{
-                color: "#6b6660",
-                backgroundColor: "rgba(20,18,15,.07)",
-                fontFamily: "var(--font-jetbrains-mono), monospace",
+                color: C.ink2,
+                backgroundColor: C.panel2,
+                fontFamily: F.mono,
               }}
             >
               {application.filter((app) => app.status === title).length}
@@ -116,7 +137,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
             <div className="flex-1" />
             <div
               className="text-[13px] font-bold leading-none"
-              style={{ color: "#a8a29a" }}
+              style={{ color: C.ink3 }}
             >
               ⋯
             </div>
@@ -124,7 +145,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
 
           <div
             className="h-0.75 mx-3 mb-2.5 rounded-full overflow-hidden"
-            style={{ backgroundColor: "rgba(20,18,15,.07)" }}
+            style={{ backgroundColor: C.line2 }}
           >
             <div
               className="h-full rounded-full w-full"
@@ -132,7 +153,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
             />
           </div>
 
-          <div className="flex flex-col gap-1.5 flex-1 min-h-0 overflow-y-auto px-2.5 pb-2.5">
+          <div className="flex flex-col gap-1.5 flex-1 min-h-0 overflow-y-auto scroll-auto dark-scroll px-2.5 pb-2.5">
             { columnApplications.map((app, index) => (
               <Draggable key={app.id} draggableId={app.id} index={index}>
                 {(provided) => (
@@ -158,7 +179,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
             {application.length === 0 && (
               <p
                 className="text-[12px] font-medium text-center mt-6"
-                style={{ color: "#a8a29a" }}
+                style={{ color: C.ink3 }}
               >
                 No entries
               </p>
@@ -168,8 +189,9 @@ function KanbanColumn({ title }: KanbanColumnProps) {
             <button
               className="flex items-center gap-1.5 px-3 py-2.5 border-t text-[11.5px] font-semibold transition-colors"
               style={{
-                borderColor: "rgba(20,18,15,.07)",
-                color: "#8a857c",
+                borderColor: C.line,
+                color: C.ink3,
+                fontFamily: F.sans,
               }}
               onClick={handelAddApplication}
             >

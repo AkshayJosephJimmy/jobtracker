@@ -2,14 +2,26 @@
 
 import { useState, SubmitEvent } from "react";
 import { useRouter } from "next/navigation";
-import { VT323 } from "next/font/google";
 import { createClient } from "@/lib/supabase/client";
 
-const vt323 = VT323({
-  variable: "--font-vt323",
-  subsets: ["latin"],
-  weight: "400",
-});
+const C = {
+  bg: "#0b0d11",
+  panel: "#12151b",
+  panel2: "#171b23",
+  line: "#232833",
+  ink: "#eceae4",
+  ink2: "#a9aeba",
+  ink3: "#6f7788",
+  lime: "#b8ff3c",
+  limeLine: "#3d5a14",
+  red: "#ff7b7f",
+} as const;
+
+const F = {
+  mono: "var(--font-jetbrains-mono), monospace",
+  sans: "var(--font-plus-jakarta), system-ui, sans-serif",
+  head: "var(--font-bricolage), sans-serif",
+} as const;
 
 export default function LoginPage() {
   const router = useRouter();
@@ -41,55 +53,45 @@ export default function LoginPage() {
 
   return (
     <div
-      className={`${vt323.variable} min-h-screen w-full flex items-center justify-center bg-black px-4 py-12 relative overflow-hidden`}
-      style={{ fontFamily: "var(--font-vt323), monospace" }}
+      className="min-h-screen w-full flex items-center justify-center px-4 py-12"
+      style={{ backgroundColor: C.bg, fontFamily: F.sans }}
     >
-      {/* CRT scanline overlay */}
-      <div
-        className="pointer-events-none absolute inset-0 z-10"
-        style={{
-          background:
-            "repeating-linear-gradient(0deg, rgba(0,255,70,0.06) 0px, rgba(0,255,70,0.06) 1px, transparent 1px, transparent 3px)",
-        }}
-      />
-      {/* Faint green vignette */}
-      <div
-        className="pointer-events-none absolute inset-0 z-10"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(0,255,70,0.04) 0%, rgba(0,0,0,0.6) 100%)",
-        }}
-      />
+      <div className="w-full max-w-sm">
+        <div className="flex items-center justify-center gap-2.5 mb-6">
+          <div
+            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: C.lime }}
+          >
+            <span className="text-base font-extrabold" style={{ color: C.bg, fontFamily: F.head }}>
+              J
+            </span>
+          </div>
+          <span className="text-xl font-extrabold tracking-tight" style={{ color: C.ink, fontFamily: F.head }}>
+            Hunt
+          </span>
+        </div>
 
-      <div className="relative z-20 w-full max-w-md">
         <div
-          className="border-2 rounded-md p-6 sm:p-8 bg-black"
-          style={{
-            borderColor: "#00ff46",
-            boxShadow:
-              "0 0 3px rgba(0,255,70,0.6), 0 0 8px rgba(0,255,70,0.2)",
-          }}
+          className="rounded-xl p-6 sm:p-8"
+          style={{ backgroundColor: C.panel, border: `1px solid ${C.line}` }}
         >
-          <div className="mb-6 text-center">
-            <h1
-              className="text-4xl tracking-widest"
-              style={{ color: "#00ff46", textShadow: "0 0 3px rgba(0,255,70,0.5)" }}
-            >
-              JOB_TRACKER
+          <div className="mb-6">
+            <div className="text-[9px] font-bold tracking-widest" style={{ color: C.lime, fontFamily: F.mono }}>
+              SYSTEM LOGIN
+            </div>
+            <h1 className="text-lg font-extrabold mt-1" style={{ color: C.ink, fontFamily: F.head }}>
+              Welcome back
             </h1>
-            <p className="text-lg tracking-wide" style={{ color: "#00ff46" }}>
-              &gt; SYSTEM LOGIN v1.0
-            </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            <div className="flex flex-col gap-1">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="email"
-                className="text-xl"
-                style={{ color: "#00ff46" }}
+                className="text-[10px] font-bold tracking-widest"
+                style={{ color: C.ink3, fontFamily: F.mono }}
               >
-                &gt; USER_EMAIL:
+                EMAIL
               </label>
               <input
                 id="email"
@@ -98,23 +100,23 @@ export default function LoginPage() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-black text-xl px-3 py-2 rounded-sm outline-none border-2 caret-[#00ff46]"
+                className="text-[13px] px-3 py-2 rounded-[7px] outline-none border"
                 style={{
-                  color: "#00ff46",
-                  borderColor: "#00ff46",
-                  boxShadow: "inset 0 0 4px rgba(0,255,70,0.15)",
+                  backgroundColor: C.panel2,
+                  color: C.ink,
+                  borderColor: C.line,
                 }}
                 placeholder="you@domain.com"
               />
             </div>
 
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1.5">
               <label
                 htmlFor="password"
-                className="text-xl"
-                style={{ color: "#00ff46" }}
+                className="text-[10px] font-bold tracking-widest"
+                style={{ color: C.ink3, fontFamily: F.mono }}
               >
-                &gt; PASSWORD:
+                PASSWORD
               </label>
               <input
                 id="password"
@@ -123,49 +125,39 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="bg-black text-xl px-3 py-2 rounded-sm outline-none border-2 caret-[#00ff46]"
+                className="text-[13px] px-3 py-2 rounded-[7px] outline-none border"
                 style={{
-                  color: "#00ff46",
-                  borderColor: "#00ff46",
-                  boxShadow: "inset 0 0 4px rgba(0,255,70,0.15)",
+                  backgroundColor: C.panel2,
+                  color: C.ink,
+                  borderColor: C.line,
                 }}
                 placeholder="********"
               />
             </div>
 
             {error && (
-              <p
-                className="text-lg tracking-wide"
-                style={{ color: "#ff3b3b", textShadow: "0 0 6px #ff3b3b" }}
-              >
-                &gt; ERROR: {error}
+              <p className="text-[12px] font-medium" style={{ color: C.red }}>
+                {error}
               </p>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="mt-2 text-2xl tracking-widest py-2 rounded-sm border-2 transition-colors disabled:opacity-50"
-              style={{
-                color: "#00ff46",
-                borderColor: "#00ff46",
-                textShadow: "0 0 3px rgba(0,255,70,0.5)",
-                boxShadow: "0 0 4px rgba(0,255,70,0.25)",
-              }}
+              className="mt-1 text-[13px] font-bold tracking-wide py-2.5 rounded-[7px] transition-colors disabled:opacity-50"
+              style={{ backgroundColor: C.lime, color: C.bg }}
             >
-              {loading ? "AUTHENTICATING..." : "[ ENTER ]"}
-              <span className="animate-pulse">_</span>
+              {loading ? "SIGNING IN…" : "SIGN IN"}
             </button>
           </form>
-          <p>Dont have an account? <a href="/signup" className="text-green-400 hover:underline">Sign up</a></p>
-        </div>
 
-        <p
-          className="text-center text-lg mt-4 tracking-wide"
-          style={{ color: "#00ff46", opacity: 0.7 }}
-        >
-          &gt; AWAITING INPUT...
-        </p>
+          <p className="text-[12.5px] mt-5 text-center" style={{ color: C.ink3 }}>
+            Don&apos;t have an account?{" "}
+            <a href="/signup" className="font-semibold hover:underline" style={{ color: C.lime }}>
+              Sign up
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );

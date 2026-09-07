@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
     <div className="flex flex-col h-screen">
       <DashboardHeader />
-      <div className="flex-1 overflow-y-auto">{children}</div>
+      <div className="flex-1 overflow-y-auto dark-scroll">{children}</div>
     </div>
     </ApplicationProvider>
   );

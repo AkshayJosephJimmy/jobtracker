@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import {createClient} from "@/lib/supabase/server"
+import{enrichApplication} from "@/app/utility/enrichApplication"
 
 
 
@@ -35,13 +36,19 @@ export async function PATCH(req:NextRequest,{params}:{params:Promise<{id:string}
         const updatedApplication=await prisma.application.update(
             {
                 where: {id: id},
+                include:{
+                        followUps:{
+                        orderBy:{followedUpAt:'desc'},
+                        take:1
+                            }
+                        },
                 
                 data:updatedData
                 
             }
         )
         
-        return NextResponse.json(updatedApplication)
+        return NextResponse.json( enrichApplication(updatedApplication))
         
     }catch(err){
 

@@ -81,24 +81,24 @@ function ApplicationDrawer({ application, onClose, onMarkFollowUp, onDelete }: A
       />
 
       <div
-        className={`absolute top-0 right-0 h-full w-105 max-w-[90vw] flex flex-col bg-neutral-950 border-l border-neutral-800 shadow-2xl transition-transform duration-200 ease-out ${
+        className={`absolute top-0 right-0 h-full w-105 max-w-[90vw] flex flex-col bg-[#0b0d11] border-l border-[#232833] shadow-2xl transition-transform duration-200 ease-out ${
           mounted ? "translate-x-0" : "translate-x-full"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="shrink-0 border-b border-neutral-800 px-5 py-4">
+        <div className="shrink-0 border-b border-[#232833] px-5 py-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h2 className="text-lg font-semibold text-neutral-100 truncate">
+              <h2 className="text-lg font-semibold text-[#eceae4] truncate">
                 {application.companyName}
               </h2>
-              <p className="text-sm text-neutral-400 truncate">{application.role}</p>
+              <p className="text-sm text-[#a9aeba] truncate">{application.role}</p>
             </div>
             <button
               type="button"
               aria-label="Close"
               onClick={onClose}
-              className="shrink-0 rounded-md p-1 text-neutral-500 hover:text-neutral-200 hover:bg-neutral-800 transition-colors"
+              className="shrink-0 rounded-md p-1 text-[#6f7788] hover:text-[#eceae4] hover:bg-[#171b23] transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -122,16 +122,16 @@ function ApplicationDrawer({ application, onClose, onMarkFollowUp, onDelete }: A
             >
               {application.status}
             </span>
-            <span className="text-xs text-neutral-500">
+            <span className="text-xs text-[#6f7788]">
               {application.portal ? `${application.portal} · ` : ""}
               applied {formatDate(application.applyDate)}
             </span>
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto px-5 py-4 flex flex-col gap-6">
+        <div className="flex-1 min-h-0 overflow-y-auto dark-scroll px-5 py-4 flex flex-col gap-6">
           <section>
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 mb-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-[#6f7788] mb-2">
               Follow-up
             </h3>
 
@@ -140,26 +140,26 @@ function ApplicationDrawer({ application, onClose, onMarkFollowUp, onDelete }: A
                 Follow-up due — {application.daysSinceContact} days since last contact
               </div>
             ) : (
-              <p className="text-sm text-neutral-500">
+              <p className="text-sm text-[#6f7788]">
                 Last contact {application.daysSinceContact} days ago
               </p>
             )}
 
             <div className="mt-3 flex flex-col gap-3">
               {sortedFollowUps.length === 0 ? (
-                <p className="text-sm text-neutral-500">No follow-ups yet</p>
+                <p className="text-sm text-[#6f7788]">No follow-ups yet</p>
               ) : (
                 <ul className="flex flex-col gap-3">
                   {sortedFollowUps.map((f, index) => (
                     <li key={f.id} className="flex gap-2.5">
                       <span
                         className={`mt-1.5 w-1.5 h-1.5 rounded-full shrink-0 ${
-                          index === 0 ? "bg-neutral-100" : "bg-neutral-700"
+                          index === 0 ? "bg-[#b8ff3c]" : "bg-[#232833]"
                         }`}
                       />
                       <div className="min-w-0">
-                        <div className="text-xs text-neutral-500">{formatDate(f.followedUpAt)}</div>
-                        <div className="text-sm text-neutral-300">{f.message}</div>
+                        <div className="text-xs text-[#6f7788]">{formatDate(f.followedUpAt)}</div>
+                        <div className="text-sm text-[#a9aeba]">{f.message}</div>
                       </div>
                     </li>
                   ))}
@@ -172,20 +172,20 @@ function ApplicationDrawer({ application, onClose, onMarkFollowUp, onDelete }: A
               onChange={(e) => setFollowUpMessage(e.target.value)}
               placeholder="What did you send? (optional)"
               rows={3}
-              className="mt-3 w-full rounded-md border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-neutral-200 placeholder:text-neutral-600 outline-none focus:border-neutral-600 resize-none"
+              className="mt-3 w-full rounded-md border border-[#232833] bg-[#12151b] px-3 py-2 text-sm text-[#eceae4] placeholder:text-[#6f7788] outline-none focus:border-[#3d5a14] resize-none"
             />
 
             <div className="mt-2 flex gap-2">
               <button
                 type="button"
                 onClick={handleMarkFollowUp}
-                className="flex-1 rounded-md bg-neutral-100 text-neutral-900 text-sm font-medium py-2 hover:bg-white transition-colors"
+                className="flex-1 rounded-md bg-[#b8ff3c] text-[#0b0d11] text-sm font-semibold py-2 hover:bg-[#c8ff52] transition-colors"
               >
                 Mark as followed up
               </button>
               <button
                 type="button"
-                className="flex-1 rounded-md border border-neutral-700 text-neutral-300 text-sm font-medium py-2 hover:bg-neutral-800 transition-colors"
+                className="flex-1 rounded-md border border-[#232833] text-[#a9aeba] text-sm font-medium py-2 hover:bg-[#171b23] transition-colors"
               >
                 Draft email
               </button>
@@ -193,37 +193,37 @@ function ApplicationDrawer({ application, onClose, onMarkFollowUp, onDelete }: A
           </section>
 
           <section>
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 mb-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-[#6f7788] mb-2">
               Details
             </h3>
             <dl className="flex flex-col gap-2 text-sm">
               <div className="flex items-center justify-between gap-3">
-                <dt className="text-neutral-500">Resume</dt>
-                <dd className="text-neutral-300 truncate max-w-60 text-right">
+                <dt className="text-[#6f7788]">Resume</dt>
+                <dd className="text-[#a9aeba] truncate max-w-60 text-right">
                   {application.resumeName && application.resumeLink ? (
                     <a
                       href={application.resumeLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-400 hover:underline"
+                      className="text-[#4a9eff] hover:underline"
                     >
                       {application.resumeName}
                     </a>
                   ) : application.resumeName ? (
                     application.resumeName
                   ) : (
-                    <span className="text-neutral-500">Not tracked</span>
+                    <span className="text-[#6f7788]">Not tracked</span>
                   )}
                 </dd>
               </div>
               <div className="flex items-center justify-between gap-3">
-                <dt className="text-neutral-500">Referral</dt>
-                <dd className="text-neutral-300">{application.hasReferral ? "Yes" : "No"}</dd>
+                <dt className="text-[#6f7788]">Referral</dt>
+                <dd className="text-[#a9aeba]">{application.hasReferral ? "Yes" : "No"}</dd>
               </div>
               <div className="flex items-start justify-between gap-3">
-                <dt className="text-neutral-500 shrink-0">Notes</dt>
-                <dd className="text-neutral-300 text-right">
-                  {application.notes ? application.notes : <span className="text-neutral-500">No notes</span>}
+                <dt className="text-[#6f7788] shrink-0">Notes</dt>
+                <dd className="text-[#a9aeba] text-right">
+                  {application.notes ? application.notes : <span className="text-[#6f7788]">No notes</span>}
                 </dd>
               </div>
             </dl>
@@ -231,21 +231,21 @@ function ApplicationDrawer({ application, onClose, onMarkFollowUp, onDelete }: A
 
           {application.jobDescription && (
             <section>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-neutral-500 mb-2">
+              <h3 className="text-xs font-semibold uppercase tracking-wide text-[#6f7788] mb-2">
                 Job description
               </h3>
-              <div className="max-h-50 overflow-y-auto rounded-md border border-neutral-800 bg-neutral-900 px-3 py-2 text-sm text-neutral-400 whitespace-pre-wrap">
+              <div className="max-h-50 overflow-y-auto dark-scroll rounded-md border border-[#232833] bg-[#12151b] px-3 py-2 text-sm text-[#a9aeba] whitespace-pre-wrap">
                 {application.jobDescription}
               </div>
             </section>
           )}
         </div>
 
-        <div className="shrink-0 border-t border-neutral-800 px-5 py-3">
+        <div className="shrink-0 border-t border-[#232833] px-5 py-3">
           <button
             type="button"
             onClick={onDelete}
-            className="text-sm text-red-500/80 hover:text-red-400 transition-colors"
+            className="text-sm text-[#ff7b7f]/80 hover:text-[#ff7b7f] transition-colors"
           >
             Delete application
           </button>

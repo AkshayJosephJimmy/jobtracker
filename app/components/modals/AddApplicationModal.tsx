@@ -19,6 +19,7 @@ type NewApplication = {
   hasReferral: boolean;
   firstResponseAt: Date | null;
   notes: string;
+
 };
 
 type AddApplicationModalProps = {
@@ -110,6 +111,7 @@ const [parseError, setParseError] = useState<string | null>(null)
       hasReferral,
       notes,
       firstResponseAt: null,
+      
     };
 
     const response = await fetch("/api/application", {
@@ -128,7 +130,8 @@ const [parseError, setParseError] = useState<string | null>(null)
       return;
     }
     const updated=await response.json()
-    setApplication(prev=>[...prev,updated.application])
+
+    setApplication(prev=>[...prev,updated])
 
     toast.success("Application added successfully!");
     onAdd?.(application);
@@ -200,7 +203,7 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
 
   function AiBadge() {
     return (
-      <span className="ml-1.5 rounded-sm bg-indigo-50 px-1 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-indigo-500">
+      <span className="ml-1.5 rounded-sm bg-[#182008] px-1 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#b8ff3c]">
         AI
       </span>
     );
@@ -208,22 +211,22 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
       onClick={handleClose}
     >
       <div
-        className="relative z-10 w-full max-w-md rounded-md border border-gray-200 bg-white p-6 max-h-[90vh] overflow-y-auto shadow-xl"
+        className="relative z-10 w-full max-w-md rounded-md border border-[#232833] bg-[#12151b] p-6 max-h-[90vh] overflow-y-auto dark-scroll shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-5 flex items-center justify-between">
-          <h1 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
+          <h1 className="text-sm font-semibold uppercase tracking-wide text-[#eceae4]">
             New Application
           </h1>
           <button
             type="button"
             onClick={handleClose}
             aria-label="Close"
-            className="text-lg leading-none px-1 text-gray-400 hover:text-gray-600"
+            className="text-lg leading-none px-1 text-[#6f7788] hover:text-[#eceae4]"
           >
             &times;
           </button>
@@ -237,11 +240,11 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
         />
 
         <div className="my-5 flex items-center gap-3">
-          <div className="h-px flex-1 bg-gray-200" />
-          <span className="text-xs uppercase tracking-wide text-gray-400">
+          <div className="h-px flex-1 bg-[#232833]" />
+          <span className="text-xs uppercase tracking-wide text-[#6f7788]">
             or enter manually
           </span>
-          <div className="h-px flex-1 bg-gray-200" />
+          <div className="h-px flex-1 bg-[#232833]" />
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -249,7 +252,7 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="companyName"
-                className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+                className="flex items-center text-xs uppercase tracking-wide text-[#6f7788]"
               >
                 Company
                 {aiFilled.has("companyName") && <AiBadge />}
@@ -263,10 +266,10 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
                   setCompanyName(e.target.value);
                   clearAiFilled("companyName");
                 }}
-                className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+                className={`bg-[#171b23] text-sm text-[#eceae4] px-3 py-2 rounded-sm outline-none border focus:border-[#3d5a14] ${
                   aiFilled.has("companyName")
-                    ? "border-gray-200 border-l-2 border-l-indigo-400"
-                    : "border-gray-200"
+                    ? "border-[#232833] border-l-2 border-l-[#b8ff3c]"
+                    : "border-[#232833]"
                 }`}
                 placeholder="Tech Company"
               />
@@ -275,7 +278,7 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="role"
-                className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+                className="flex items-center text-xs uppercase tracking-wide text-[#6f7788]"
               >
                 Role
                 {aiFilled.has("role") && <AiBadge />}
@@ -289,10 +292,10 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
                   setRole(e.target.value);
                   clearAiFilled("role");
                 }}
-                className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+                className={`bg-[#171b23] text-sm text-[#eceae4] px-3 py-2 rounded-sm outline-none border focus:border-[#3d5a14] ${
                   aiFilled.has("role")
-                    ? "border-gray-200 border-l-2 border-l-indigo-400"
-                    : "border-gray-200"
+                    ? "border-[#232833] border-l-2 border-l-[#b8ff3c]"
+                    : "border-[#232833]"
                 }`}
                 placeholder="Frontend Developer"
               />
@@ -302,7 +305,7 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
           <div className="flex flex-col gap-1">
             <label
               htmlFor="status"
-              className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+              className="flex items-center text-xs uppercase tracking-wide text-[#6f7788]"
             >
               Status
               {aiFilled.has("status") && <AiBadge />}
@@ -314,10 +317,10 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
                 setStatus(e.target.value);
                 clearAiFilled("status");
               }}
-              className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+              className={`bg-[#171b23] text-sm text-[#eceae4] px-3 py-2 rounded-sm outline-none border focus:border-[#3d5a14] ${
                 aiFilled.has("status")
-                  ? "border-gray-200 border-l-2 border-l-indigo-400"
-                  : "border-gray-200"
+                  ? "border-[#232833] border-l-2 border-l-[#b8ff3c]"
+                  : "border-[#232833]"
               }`}
             >
               {STATUSES.map((s) => (
@@ -332,7 +335,7 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="portal"
-                className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+                className="flex items-center text-xs uppercase tracking-wide text-[#6f7788]"
               >
                 Portal
                 {aiFilled.has("portal") && <AiBadge />}
@@ -345,10 +348,10 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
                   setPortal(e.target.value);
                   clearAiFilled("portal");
                 }}
-                className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+                className={`bg-[#171b23] text-sm text-[#eceae4] px-3 py-2 rounded-sm outline-none border focus:border-[#3d5a14] ${
                   aiFilled.has("portal")
-                    ? "border-gray-200 border-l-2 border-l-indigo-400"
-                    : "border-gray-200"
+                    ? "border-[#232833] border-l-2 border-l-[#b8ff3c]"
+                    : "border-[#232833]"
                 }`}
                 placeholder="LinkedIn"
               />
@@ -357,7 +360,7 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
             <div className="flex flex-col gap-1">
               <label
                 htmlFor="resumeName"
-                className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+                className="flex items-center text-xs uppercase tracking-wide text-[#6f7788]"
               >
                 Resume Name
                 {aiFilled.has("resumeName") && <AiBadge />}
@@ -370,10 +373,10 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
                   setResumeName(e.target.value);
                   clearAiFilled("resumeName");
                 }}
-                className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+                className={`bg-[#171b23] text-sm text-[#eceae4] px-3 py-2 rounded-sm outline-none border focus:border-[#3d5a14] ${
                   aiFilled.has("resumeName")
-                    ? "border-gray-200 border-l-2 border-l-indigo-400"
-                    : "border-gray-200"
+                    ? "border-[#232833] border-l-2 border-l-[#b8ff3c]"
+                    : "border-[#232833]"
                 }`}
                 placeholder="resume_v2.pdf"
               />
@@ -383,7 +386,7 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
           <div className="flex flex-col gap-1">
             <label
               htmlFor="resumeLink"
-              className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+              className="flex items-center text-xs uppercase tracking-wide text-[#6f7788]"
             >
               Resume Link
               {aiFilled.has("resumeLink") && <AiBadge />}
@@ -396,10 +399,10 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
                 setResumeLink(e.target.value);
                 clearAiFilled("resumeLink");
               }}
-              className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+              className={`bg-[#171b23] text-sm text-[#eceae4] px-3 py-2 rounded-sm outline-none border focus:border-[#3d5a14] ${
                 aiFilled.has("resumeLink")
-                  ? "border-gray-200 border-l-2 border-l-indigo-400"
-                  : "border-gray-200"
+                  ? "border-[#232833] border-l-2 border-l-[#b8ff3c]"
+                  : "border-[#232833]"
               }`}
               placeholder="https://..."
             />
@@ -407,14 +410,14 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
 
           <label
             htmlFor="hasReferral"
-            className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer"
+            className="flex items-center gap-2 text-sm text-[#a9aeba] cursor-pointer"
           >
             <input
               id="hasReferral"
               type="checkbox"
               checked={hasReferral}
               onChange={(e) => setHasReferral(e.target.checked)}
-              className="h-4 w-4 accent-indigo-500"
+              className="h-4 w-4 accent-[#b8ff3c]"
             />
             Referral
           </label>
@@ -422,7 +425,7 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
           <div className="flex flex-col gap-1">
             <label
               htmlFor="jobDescription"
-              className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+              className="flex items-center text-xs uppercase tracking-wide text-[#6f7788]"
             >
               Job Description
               {aiFilled.has("jobDescription") && <AiBadge />}
@@ -435,10 +438,10 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
                 setJobDescription(e.target.value);
                 clearAiFilled("jobDescription");
               }}
-              className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 resize-none ${
+              className={`bg-[#171b23] text-sm text-[#eceae4] px-3 py-2 rounded-sm outline-none border focus:border-[#3d5a14] resize-none ${
                 aiFilled.has("jobDescription")
-                  ? "border-gray-200 border-l-2 border-l-indigo-400"
-                  : "border-gray-200"
+                  ? "border-[#232833] border-l-2 border-l-[#b8ff3c]"
+                  : "border-[#232833]"
               }`}
               placeholder="Paste the job description..."
             />
@@ -447,7 +450,7 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
           <div className="flex flex-col gap-1">
             <label
               htmlFor="notes"
-              className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+              className="flex items-center text-xs uppercase tracking-wide text-[#6f7788]"
             >
               Notes
               {aiFilled.has("notes") && <AiBadge />}
@@ -460,10 +463,10 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
                 setNotes(e.target.value);
                 clearAiFilled("notes");
               }}
-              className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 resize-none ${
+              className={`bg-[#171b23] text-sm text-[#eceae4] px-3 py-2 rounded-sm outline-none border focus:border-[#3d5a14] resize-none ${
                 aiFilled.has("notes")
-                  ? "border-gray-200 border-l-2 border-l-indigo-400"
-                  : "border-gray-200"
+                  ? "border-[#232833] border-l-2 border-l-[#b8ff3c]"
+                  : "border-[#232833]"
               }`}
               placeholder="Any extra notes..."
             />
@@ -472,7 +475,7 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
           <div className="flex flex-col gap-1">
             <label
               htmlFor="applyDate"
-              className="flex items-center text-xs uppercase tracking-wide text-gray-500"
+              className="flex items-center text-xs uppercase tracking-wide text-[#6f7788]"
             >
               Apply Date
               {aiFilled.has("applyDate") && <AiBadge />}
@@ -487,10 +490,10 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
                 setApplyDate(e.target.value);
                 clearAiFilled("applyDate");
               }}
-              className={`bg-white text-sm text-gray-800 px-3 py-2 rounded-sm outline-none border focus:border-gray-400 ${
+              className={`bg-[#171b23] text-sm text-[#eceae4] px-3 py-2 rounded-sm outline-none border focus:border-[#3d5a14] ${
                 aiFilled.has("applyDate")
-                  ? "border-gray-200 border-l-2 border-l-indigo-400"
-                  : "border-gray-200"
+                  ? "border-[#232833] border-l-2 border-l-[#b8ff3c]"
+                  : "border-[#232833]"
               }`}
             />
           </div>
@@ -499,14 +502,14 @@ if (data.jobDescription) setJobDescription(data.jobDescription)
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 text-sm font-medium py-2 rounded-sm border border-gray-200 text-gray-600 transition-colors hover:bg-gray-50"
+              className="flex-1 text-sm font-medium py-2 rounded-sm border border-[#232833] text-[#a9aeba] transition-colors hover:bg-[#171b23]"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting}
-              className="flex-1 text-sm font-medium py-2 rounded-sm border border-gray-800 bg-gray-800 text-white transition-colors hover:bg-gray-700 disabled:opacity-50"
+              className="flex-1 text-sm font-semibold py-2 rounded-sm border border-[#b8ff3c] bg-[#b8ff3c] text-[#0b0d11] transition-colors hover:bg-[#c8ff52] disabled:opacity-50"
             >
               {submitting ? "Saving..." : "Save"}
             </button>
