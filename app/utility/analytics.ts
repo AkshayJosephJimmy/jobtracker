@@ -1,4 +1,6 @@
+import { createClient } from "@/lib/supabase/client";
 import { useApplication } from "../context/ApplicationsContext";
+
 
 
  function getResponseRate(app:any){
@@ -87,7 +89,7 @@ return {
 
 }
 
-export function getWeeklyProgress(app:any,target=10){
+export  function getWeeklyProgress(app:any[],target=10){
 
 const now=new Date()
 const monday=new Date(now)
@@ -95,7 +97,9 @@ monday.setDate(now.getDate()-((now.getDate()+6)%7))
 monday.setHours(0,0,0,0)
 console.log("analtucs",app)
 
-const applied=app.filter((application:any)=>new Date(application.applyDate)>= monday).length
+
+const applied=app.filter((application:any)=>new Date(application.applyDate)>= monday).length 
+console.log("applied",applied)
 
 return {
     applied,

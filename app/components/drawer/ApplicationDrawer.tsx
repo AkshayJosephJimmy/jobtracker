@@ -1,32 +1,33 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {Application,FollowUp} from "@/app/utility/types/application"
 
-type FollowUp = {
-  id: string;
-  message: string | null;
-  followedUpAt: string;
-};
+// type FollowUp = {
+//   id: string;
+//   message: string | null;
+//   followedUpAt: string;
+// };
 
-type Application = {
-  id: string;
-  companyName: string;
-  role: string;
-  status: "APPLIED" | "SCREENING" | "INTERVIEW" | "REJECTED";
-  portal: string | null;
-  applyDate: string;
-  resumeName: string | null;
-  resumeLink: string | null;
-  hasReferral: boolean;
-  notes: string | null;
-  jobDescription: string | null;
-  daysSinceContact: number;
-  isFollowUpDue: boolean;
-  followUps: FollowUp[];
-};
+// type Application = {
+//   id: string;
+//   companyName: string;
+//   role: string;
+//   status: "APPLIED" | "SCREENING" | "INTERVIEW" | "REJECTED";
+//   portal: string | null;
+//   applyDate: string;
+//   resumeName: string | null;
+//   resumeLink: string | null;
+//   hasReferral: boolean;
+//   notes: string | null;
+//   jobDescription: string | null;
+//   daysSinceContact: number;
+//   isFollowUpDue: boolean;
+//   followUps: FollowUp[];
+// };
 
 type ApplicationDrawerProps = {
-  application: Application;
+  application: Application ;
   onClose: () => void;
   onMarkFollowUp: (message: string) => void;
   onDelete: () => void;

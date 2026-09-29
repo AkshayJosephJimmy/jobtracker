@@ -4,9 +4,20 @@ import KanbanBoard from "../components/kanban/KanbanBoard";
 import { createClient } from "@/lib/supabase/client";
 import { useState } from "react";
 import { useEffect } from "react";
-import { ApplicationProvider } from "../context/ApplicationsContext";
 import ApplicationDrawer from "../components/drawer/ApplicationDrawer";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
+import { useFilters } from "../context/FilterContext";
+import { useRouter } from "next/navigation";
+
+
+function filterButtonStyle(selected: boolean) {
+  return {
+    backgroundColor: selected ? "#1f2430" : C.panel2,
+    border: `1px solid ${C.line}`,
+    color: selected ? C.lime : C.ink2,
+    fontFamily: F.mono,
+  };
+}
 
 const C = {
   bg: "#0b0d11",
@@ -33,18 +44,16 @@ const F = {
 
 
 
-  const[userName, setUserName] = useState()
+ 
+  const [isAll, setIsAll] = useState(false);
+  const {filters,toggleFilter}=useFilters()
+  const router=useRouter()
 
-  useEffect( () => {
-    async function fetchUser() {
-    const supabase = createClient();
-    const { data,error } = await supabase.auth.getUser();
-   // setUserName(data.user.email.split('@')[0]);
-    console.log(userName)
-}
-fetchUser()
+ 
+  
+ 
 
-},[]);
+  
 
 
 
@@ -62,7 +71,7 @@ fetchUser()
     >
 
 
-      <div
+      {/* <div
         className="flex items-center gap-3 px-5 py-2"
         style={{ backgroundColor: C.amberBg, borderBottom: `1px solid ${C.amberLine}` }}
       >
@@ -74,36 +83,28 @@ fetchUser()
         <span className="text-[11.5px] font-semibold underline" style={{ color: C.amber }}>
           Review all →
         </span>
-      </div>
+      </div> */}
 
       <div
         className="flex items-center gap-2 px-5 py-2"
         style={{ backgroundColor: C.panel, borderBottom: `1px solid ${C.line}` }}
       >
-        <div
-          className="rounded-[5px] px-2.5 py-1 text-[11px] font-semibold tracking-wide"
-          style={{ backgroundColor: "#1f2430", color: C.lime, fontFamily: F.mono, border: `1px solid ${C.line}` }}
-        >
-          ALL
-        </div>
-        <div
-          className="rounded-[5px] px-2.5 py-1 text-[11px] font-medium tracking-wide"
-          style={{ backgroundColor: C.panel2, border: `1px solid ${C.line}`, color: C.ink2, fontFamily: F.mono }}
+        
+        <button
+          className="rounded-[5px] px-2.5 py-1 text-[11px] font-semibold tracking-wide transition-colors"
+          style={filterButtonStyle(filters.isFollowUp)}
+          onClick={() => toggleFilter("isFollowUp")}
         >
           NEEDS FOLLOW-UP
-        </div>
-        <div
-          className="rounded-[5px] px-2.5 py-1 text-[11px] font-medium tracking-wide"
-          style={{ backgroundColor: C.panel2, border: `1px solid ${C.line}`, color: C.ink2, fontFamily: F.mono }}
+        </button>
+        <button
+          className="rounded-[5px] px-2.5 py-1 text-[11px] font-semibold tracking-wide transition-colors"
+          style={filterButtonStyle(filters.isWeekly)}
+          onClick={() => toggleFilter("isWeekly")}
         >
           THIS WEEK
-        </div>
-        <div
-          className="rounded-[5px] px-2.5 py-1 text-[11px] font-medium tracking-wide"
-          style={{ backgroundColor: C.panel2, border: `1px solid ${C.line}`, color: C.ink2, fontFamily: F.mono }}
-        >
-          PORTAL ▾
-        </div>
+        </button>
+       
       </div>
 
 

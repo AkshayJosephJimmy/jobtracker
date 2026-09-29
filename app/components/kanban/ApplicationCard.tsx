@@ -8,7 +8,7 @@ type Application = {
   job: string;
   portal: string;
   status: string;
-  dateApplied: string;
+  applyDate: string;
   followUpStatus: string;
   updatedAt:string;
   daysSinceContact:number
@@ -52,6 +52,12 @@ function hexToRgba(hex: string, alpha: number) {
   const g = (bigint >> 8) & 255;
   const b = bigint & 255;
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function formatApplyDate(dateStr: string) {
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return null;
+  return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
 function portalDotColor(portal: string) {
@@ -176,12 +182,22 @@ async function handleDelete(){
           {application.companyName}
         </h3>
       </div>
-      <p
-        className="text-[11.5px] font-medium mt-0.5 truncate"
-        style={{ color: C.ink3 }}
-      >
-        {application.role}
-      </p>
+      <div className="flex items-baseline gap-1.5 mt-0.5">
+        <p
+          className="text-[11.5px] font-medium truncate min-w-0"
+          style={{ color: C.ink3 }}
+        >
+          {application.role}
+        </p>
+        {formatApplyDate(application.applyDate) && (
+          <span
+            className="text-[9px] font-semibold shrink-0 ml-auto"
+            style={{ color: C.ink3, fontFamily: F.mono, opacity: 0.75 }}
+          >
+            {formatApplyDate(application.applyDate)}
+          </span>
+        )}
+      </div>
 
       <div className="flex items-center gap-1.5 mt-2">
         <div
@@ -218,13 +234,6 @@ async function handleDelete(){
           )}
         </div>
       </div>
-
-      {/* <div
-        className="text-[10.5px] mt-2"
-        style={{ color: "#a8a29a", fontFamily: "var(--font-jetbrains-mono), monospace" }}
-      >
-        Applied {application.dateApplied}
-      </div> */}
 
       <button
         className="mt-2.5 w-full text-[11px] font-semibold tracking-wide py-1.5 rounded-[7px] transition-colors"

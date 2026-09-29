@@ -1,18 +1,20 @@
+import { Application } from "@/app/utility/types/application"
 
 
 
- export async function fetchApplications(){
+ export async function fetchApplications():Promise<Application[]>{
     
        
       const res= await fetch('/api/application')
-      console.log(res)
-      const data=await res.json()
+      if (res.status === 401) {
+    throw new Error('Unauthorized')
+  }
 
+  if (!res.ok) {
+    throw new Error(`Failed to fetch applications (${res.status})`)
+  }
 
-
-
-        console.log("ddfs",data)
-        return data;
+  return res.json()
         
         
 

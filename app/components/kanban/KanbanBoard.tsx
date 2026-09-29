@@ -6,12 +6,15 @@ import {useApplication} from "../../context/ApplicationsContext";
 import { useEffect } from "react";
 import {fetchApplications} from "../../utility/fetchApplications"
 import ApplicationDrawer from "../drawer/ApplicationDrawer";
+import { useFilters } from "@/app/context/FilterContext";
 
 function KanbanBoard() {
 
   
   const{application,setApplication,selectedId,setSelectedId}=useApplication()
   const selected=application.find(app=>app.id==selectedId)
+  
+  
 
   const previousApplication=application
     async function handleDragEnd(result: DropResult) {
@@ -41,8 +44,8 @@ function KanbanBoard() {
        setApplication(prev=>prev.map(app=>app.id===updatedApplication.id ? updatedApplication:app))
 
        if (!res.ok){
-        throw new Error("card not in the right column")
         setApplication(previousApplication)
+        throw new Error("card not in the right column")
        }
 
        
@@ -83,7 +86,7 @@ function KanbanBoard() {
       </div>
     </DragDropContext>
 
-    {selectedId && <ApplicationDrawer application={selected} onClose={()=>{setSelectedId(null);return }} onMarkFollowUp={followUp} 
+    {selected && <ApplicationDrawer application={selected} onClose={()=>{setSelectedId(null);return }} onMarkFollowUp={followUp} 
     onDelete={()=>{console.log("deleted")}}  />}
 
         </>

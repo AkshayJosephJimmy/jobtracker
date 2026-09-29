@@ -45,7 +45,7 @@ const F = {
 /* ---------- types ---------- */
 
 export type Stat = { label: string; value: string; };
-export type Portal = { name: string;count:number,responseCount:number  };
+export type Portal = { name: string;count:number,responseCount:number,color?:string  };
 export type FunnelStage = { name: string; count: number; color?: string };
 export type AnalyticsData = {
   stats: Stat[];
@@ -301,12 +301,14 @@ export default function AnalyticsPage() {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <StatRow stats={data.stat} />
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.35fr) minmax(0,1fr)', gap: 14 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 14 }}>
             <PortalEffectiveness portals={data.portal} />
-            {/* <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 }}>
+            {/* Re-enable the second column when these come back:
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14, minWidth: 0 }}>
               <Funnel funnel={data.funnel} />
               <Consistency daily={data.daily} streak={data.streak} dailyTarget={data.dailyTarget} />
-            </div> */}
+            </div>
+            and change gridTemplateColumns back to 'minmax(0,1.35fr) minmax(0,1fr)' */}
           </div>
         </div>
 

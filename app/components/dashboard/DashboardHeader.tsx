@@ -2,9 +2,11 @@
 
 import { useApplication } from "@/app/context/ApplicationsContext";
 import { searchApplications } from "@/app/utility/searchApplications";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { useState,useEffect } from "react";
 import {getWeeklyProgress} from "@/app/utility/analytics"
+import {createClient} from  "@/lib/supabase/client"
+import type { User } from "@supabase/supabase-js";
 
 const C = {
   bg: "#0b0d11",
@@ -27,10 +29,44 @@ const F = {
   head: "var(--font-bricolage), sans-serif",
 } as const;
 
+const supabase=createClient()
  function DashboardHeader() {
+  const [user,setUser]=useState<User | null>(null);
+
+  useEffect(()=>{
+
+    supabase.auth.getUser().then(
+      (response)=>{
+        const data=response.data
+        const user=data.user
+        setUser(user)
+        
+
+
+
+      }
+    ).catch(
+      (err)=>{
+        throw new Error("cannot get user")
+      }
+    )
+
+    
+
+  },[])
+  console.log(user)
+  const name= user?.user_metadata?.full_name
+  console.log("username:",name)
 
   const router = useRouter();
+  const pathname = usePathname();
   const { application, query ,setQuery} = useApplication();
+
+  const NAV_ITEMS = [
+    { label: "BOARD", path: "/dashboard" },
+    { label: "ANALYTICS", path: "/dashboard/analytics" },
+   
+  ] as const;
 
   const weekData=getWeeklyProgress(application)
   console.log(weekData)
@@ -64,26 +100,34 @@ const F = {
       </div>
 
       <div className="flex rounded-[5px] overflow-hidden" style={{ border: `1px solid ${C.line}` }}>
-        <div
-          className="px-3.5 py-1.5 text-[11px] font-semibold tracking-wide"
-          style={{ backgroundColor: "#1f2430", color: C.lime, fontFamily: F.mono }}
-          onClick={() => router.push("/dashboard")}
-        >
-          BOARD
-        </div>
-        <div
-          onClick={() => router.push("dashboard/analytics")}
-          className="px-3.5 py-1.5 text-[11px] font-semibold tracking-wide"
-          style={{ color: C.ink3, fontFamily: F.mono, borderLeft: `1px solid ${C.line}` }}
-        >
-          ANALYTICS
-        </div>
-        <div
-          className="px-3.5 py-1.5 text-[11px] font-semibold tracking-wide"
-          style={{ color: C.ink3, fontFamily: F.mono, borderLeft: `1px solid ${C.line}` }}
-        >
-          FOLLOW-UPS
-        </div>
+        {NAV_ITEMS.map((item, i) => {
+          const isActive = item.path !== null && pathname === item.path;
+          return (
+            <div
+              key={item.label}
+              onClick={() => item.path && router.push(item.path)}
+              className="px-3.5 py-1.5 text-[11px] font-semibold tracking-wide cursor-pointer transition-colors"
+              style={{
+                backgroundColor: isActive ? "#1f2430" : "transparent",
+                color: isActive ? C.lime : C.ink3,
+                fontFamily: F.mono,
+                borderLeft: i ? `1px solid ${C.line}` : undefined,
+              }}
+              onMouseEnter={(e) => {
+                if (isActive) return;
+                e.currentTarget.style.backgroundColor = C.panel2;
+                e.currentTarget.style.color = C.ink;
+              }}
+              onMouseLeave={(e) => {
+                if (isActive) return;
+                e.currentTarget.style.backgroundColor = "transparent";
+                e.currentTarget.style.color = C.ink3;
+              }}
+            >
+              {item.label}
+            </div>
+          );
+        })}
       </div>
 
       <div className="flex-1 flex justify-center">
@@ -144,6 +188,14 @@ const F = {
       >
         ✓
       </button>
+      {name && (
+        <span
+          className="text-[12.5px] font-semibold truncate max-w-32"
+          style={{ color: C.ink2, fontFamily: F.sans }}
+        >
+          Hi, {name}
+        </span>
+      )}
     </div>
   );
 }

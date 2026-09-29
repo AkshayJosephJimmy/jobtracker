@@ -6,6 +6,11 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 
+
+
+
+
+
 const C = {
   bg: "#0b0d11",
   panel: "#12151b",
@@ -29,6 +34,7 @@ export default function SignupPage() {
 
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [username,setUsername]=useState("")
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -52,13 +58,14 @@ export default function SignupPage() {
     const { data,error } = await supabase.auth.signUp({
       email,
       password,
+      options: { data: { fullName: username } }
     });
-    if (!data.session) {
-  setError('An account with this email already exists. Please login instead.');
-  console.log('Error signing up:', error);
-  setLoading(false)
-  return
-}
+//     if (!data.user) {
+//   setError('An account with this email already exists. Please login instead.');
+//   console.log('Error signing up:', error);
+//   setLoading(false)
+//   return
+// }
 
     if (data){
       toast.success("Account created. Check your email to confirm.");
@@ -131,6 +138,30 @@ export default function SignupPage() {
                   borderColor: C.line,
                 }}
                 placeholder="you@domain.com"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label
+                htmlFor="username"
+                className="text-[10px] font-bold tracking-widest"
+                style={{ color: C.ink3, fontFamily: F.mono }}
+              >
+                USERNAME
+              </label>
+              <input
+                id="username"
+                type="text"
+                
+                autoComplete="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="text-[13px] px-3 py-2 rounded-[7px] outline-none border"
+                style={{
+                  backgroundColor: C.panel2,
+                  color: C.ink,
+                  borderColor: C.line,
+                }}
+                placeholder="megatron"
               />
             </div>
 

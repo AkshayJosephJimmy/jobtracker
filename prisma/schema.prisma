@@ -23,6 +23,7 @@ enum Status {
 model User {
   id           String        @id @db.Uuid
   createdAt    DateTime      @default(now()) @map("created_at")
+  fullname         String?    @map("full_name")  
   applications Application[]
 
   @@map("users")

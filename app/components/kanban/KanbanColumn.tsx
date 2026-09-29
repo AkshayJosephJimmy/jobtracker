@@ -9,7 +9,10 @@ import { createClient } from "@/lib/supabase/client";
 import {useApplication,} from "../../context/ApplicationsContext"
 import {fetchApplications} from "../../utility/fetchApplications"
 import ApplicationDrawer from "../drawer/ApplicationDrawer";
-import { searchApplications } from "@/app/utility/searchApplications";
+import { searchApplications ,followUpApplication} from "@/app/utility/searchApplications";
+import Loader from "@/app/utility/LoaderForCard";
+import { useFilters } from "@/app/context/FilterContext";
+import { getWeeklyApplications } from "@/app/utility/searchApplications";
 
 
 
@@ -45,10 +48,15 @@ const COLUMN_STYLES: Record<string, { dot: string; bg: string; border: string }>
 const DEFAULT_COLUMN_STYLE = { dot: C.ink4, bg: C.panel, border: C.line };
 
 function KanbanColumn({ title }: KanbanColumnProps) {
- 
-  const {application,setApplication,query}=useApplication()
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
+
+ 
+  const {application,setApplication,query,loading,isFollowUp}=useApplication()
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const{filters,toggleFilter}=useFilters()
+  console.log("filters",filters)
+  
+  
 
 
 
@@ -65,12 +73,28 @@ function KanbanColumn({ title }: KanbanColumnProps) {
     console.log("fdfd",application)
 
     const columnStyle = COLUMN_STYLES[title.trim().toUpperCase()] ?? DEFAULT_COLUMN_STYLE;
-    const searchResults = searchApplications(application,query);
+    let visible = searchApplications(application,query);
+    
     console.log("query",query)
-    console.log("searchResults",searchResults)
+    
+   
+    if(filters.isFollowUp){
+      visible=followUpApplication(visible)
 
-    const columnApplications = searchResults
+
+    }
+    if(filters.isWeekly){
+      visible=getWeeklyApplications(visible)
+    }
+
+
+    
+    console.log("enriched",visible)
+    
+    
+    const columnApplications = visible
       .filter((app) => app.status === title)
+      
       .sort((a, b) => b.daysSinceContact - a.daysSinceContact);
 
     // for the highlighting of new application when added
@@ -124,6 +148,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
             >
               {title.trim().toUpperCase()}
             </div>
+            {loading ? <Loader /> :
             <div
               className="text-[11px] font-bold rounded-[5px] px-1.5 py-0.5"
               style={{
@@ -133,7 +158,7 @@ function KanbanColumn({ title }: KanbanColumnProps) {
               }}
             >
               {application.filter((app) => app.status === title).length}
-            </div>
+            </div>}
             <div className="flex-1" />
             <div
               className="text-[13px] font-bold leading-none"

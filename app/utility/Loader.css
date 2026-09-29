@@ -1,0 +1,29 @@
+/* Loader.css */
+.loader {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #232833;
+  border-top-color: #b8ff3c;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loader-wrap {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  background-color: #171b23;
+}
+
+.loader-wrap span {
+  font-family: var(--font-jetbrains-mono), monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #a9aeba;
+}
