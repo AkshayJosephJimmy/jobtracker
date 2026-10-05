@@ -20,7 +20,7 @@ const F = {
 export default function Home() {
 
 
-  
+
   return (
     <div style={{ backgroundColor: C.bg, fontFamily: F.sans, color: C.ink }}>
       {/* ---------------- NAV ---------------- */}
@@ -73,7 +73,7 @@ export default function Home() {
           className="text-4xl sm:text-5xl font-extrabold tracking-tight max-w-3xl mx-auto"
           style={{ fontFamily: F.head }}
         >
-          Your headline goes here
+          Get your job applications organized and under control with JHunt.
         </h1>
 
         {/* TODO: Replace with your own subheading / pitch */}

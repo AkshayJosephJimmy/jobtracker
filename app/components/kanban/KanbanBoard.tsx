@@ -79,8 +79,8 @@ function KanbanBoard() {
         style={{ backgroundColor: "transparent" }}
         >
         <KanbanColumn title="APPLIED" />
-        <KanbanColumn title="INTERVIEW" />
         <KanbanColumn title="SCREENING" />
+        <KanbanColumn title="INTERVIEW" />
         <KanbanColumn title="REJECTED" />
 
       </div>
